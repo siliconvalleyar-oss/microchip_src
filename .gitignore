@@ -1,0 +1,19 @@
+# Microchip MPLABX libraries
+Microchip/
+
+# Backup archives
+backupZip/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# Recovery and temp scripts
+recover_projects*.sh
+setup_orphan_branches.sh
