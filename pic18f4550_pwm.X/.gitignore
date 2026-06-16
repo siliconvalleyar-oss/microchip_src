@@ -1,0 +1,56 @@
+# MPLABX IDE
+build/
+dist/
+_build/
+out/
+debug/
+default/
+
+# Generated build files
+*.elf
+*.hex
+*.cof
+*.log
+*.lst
+*.map
+*.o
+*.obj
+*.d
+*.a
+*.lib
+*.sym
+*.i
+*.s
+*.pre
+*.tags
+*.tags_sorted
+*.tags_sorted_by_file
+*.mk
+*.generated
+
+# Makefile artifacts
+Makefile-default*
+
+# MPLABX user-specific IDE settings
+nbproject/private/
+
+# MPLABX generated scripts
+nbproject/Package-*.bash
+nbproject/Makefile-*
+nbproject/Makefile-*.mk
+
+# VS Code
+.vscode/
+
+# CMake
+cmake/
+CMakeCache.txt
+CMakeFiles/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Other
+__vmchk.*
+__lccdir.*
