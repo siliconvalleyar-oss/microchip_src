@@ -1,0 +1,328 @@
+/**
+ * @file st7789_driver.c
+ * @brief Implementación del driver base ST7789
+ */
+
+#include "st7789_driver.h"
+
+// ==================== CONFIGURACIÓN DEL SISTEMA (una sola vez) ====================
+#pragma config FPLLMUL  = MUL_20
+#pragma config FPLLIDIV = DIV_2
+#pragma config FPLLODIV = DIV_1
+#pragma config FWDTEN   = OFF
+#pragma config POSCMOD  = XT
+#pragma config FNOSC    = PRIPLL
+#pragma config FPBDIV   = DIV_1
+
+// ==================== SEMILLA LCG ====================
+static uint32_t _lcg_seed = 12345;
+
+uint32_t lcg_rand(void) {
+    _lcg_seed = _lcg_seed * 1664525u + 1013904223u;
+    return _lcg_seed >> 16;
+}
+
+void lcg_srand(uint32_t seed) {
+    _lcg_seed = seed;
+}
+
+// ==================== DELAY ====================
+void delay_ms(uint32_t ms) {
+    while(ms--) delay_cycles(40000);
+}
+
+void delay_us(uint32_t us) {
+    delay_cycles(us * 40);
+}
+
+// ==================== SPI4 - INICIALIZACIÓN ====================
+void spi4_init(void) {
+    DDPCON  = 0x00;
+    AD1PCFG = 0xFFFF;
+
+    TRISBCLR = (1<<6);   // RB6 = SCK4 salida
+    TRISFCLR = (1<<5);   // RF5 = SDO4 salida
+    TRISFSET = (1<<4);   // RF4 = SDI4 entrada
+
+    // Desbloquear PPS
+    SYSKEY = 0xAA996655;
+    SYSKEY = 0x556699AA;
+    OSCCONCLR = (1<<6);
+
+    volatile uint32_t *RPOR3  = (volatile uint32_t*)0xBF80B33C;
+    volatile uint32_t *RPOR2  = (volatile uint32_t*)0xBF80B338;
+    volatile uint32_t *RPINR20= (volatile uint32_t*)0xBF80B3A0;
+
+    *RPOR3  = (*RPOR3  & 0xFFFFFF00) | 3;       // SCK4 -> RB6(RP6)
+    *RPOR2  = (*RPOR2  & 0x0000FFFF) | (4<<16); // SDO4 -> RF5(RP5)
+    *RPINR20= (*RPINR20& 0xFFFFFF00) | 4;       // SDI4 <- RF4(RP4)
+
+    SYSKEY = 0x00000000;
+
+    SPI4CON = 0;
+    SPI4BRG  = 0;
+    SPI4CONbits.MSTEN = 1;
+    SPI4CONbits.MODE16= 0;
+    SPI4CONbits.CKP   = 1;  // CPOL=1 => Modo 3
+    SPI4CONbits.CKE   = 0;  // CPHA=1
+    SPI4CONbits.SMP   = 0;
+    SPI4STATbits.SPIROV = 0;
+    SPI4CONbits.ON = 1;
+}
+
+// ==================== SPI4 - LOW LEVEL ====================
+void spi4_write(uint8_t d) {
+    while(SPI4STATbits.SPITBF);
+    SPI4BUF = d;
+    while(!SPI4STATbits.SPIRBF);
+    (void)SPI4BUF;
+}
+
+void write_cmd(uint8_t c)  { DC_LAT=0; spi4_write(c); }
+void write_data(uint8_t d) { DC_LAT=1; spi4_write(d); }
+
+void push_color(uint16_t color) {
+    spi4_write(color >> 8);
+    spi4_write(color & 0xFF);
+}
+
+// ==================== DISPLAY - RESET & INIT ====================
+void reset_display(void) {
+    RST_LAT=1; delay_ms(10);
+    RST_LAT=0; delay_ms(20);
+    RST_LAT=1; delay_ms(150);
+}
+
+void init_display(void) {
+    reset_display();
+
+    write_cmd(0x11); delay_ms(120);    // Sleep Out
+    write_cmd(0x36); write_data(0x00); // MADCTL: normal
+    write_cmd(0x3A); write_data(0x05); // COLMOD: 16bpp
+    write_cmd(0x21);                   // Display Inversion ON
+    write_cmd(0x13);                   // Normal Display Mode ON
+
+    // Porch control
+    write_cmd(0xB2);
+    write_data(0x0C); write_data(0x0C); write_data(0x00);
+    write_data(0x33); write_data(0x33);
+
+    write_cmd(0xB7); write_data(0x35);
+    write_cmd(0xBB); write_data(0x37);
+    write_cmd(0xC0); write_data(0x2C);
+    write_cmd(0xC2); write_data(0x01);
+    write_cmd(0xC3); write_data(0x12);
+    write_cmd(0xC4); write_data(0x20);
+    write_cmd(0xC6); write_data(0x0F);
+
+    write_cmd(0xD0); write_data(0xA4); write_data(0xA1);
+
+    // Gamma positiva
+    write_cmd(0xE0);
+    const uint8_t gp[]={0xD0,0x04,0x0D,0x11,0x13,0x2B,0x3F,0x54,
+                         0x4C,0x18,0x0D,0x0B,0x1F,0x23};
+    for(int i=0;i<14;i++) write_data(gp[i]);
+
+    // Gamma negativa
+    write_cmd(0xE1);
+    const uint8_t gn[]={0xD0,0x04,0x0C,0x11,0x13,0x2C,0x3F,0x44,
+                         0x51,0x2F,0x1F,0x1F,0x20,0x23};
+    for(int i=0;i<14;i++) write_data(gn[i]);
+
+    write_cmd(0x29); delay_ms(120);    // Display ON
+}
+
+// ==================== VENTANA ====================
+void set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+    write_cmd(0x2A);
+    write_data(x0>>8); write_data(x0&0xFF);
+    write_data(x1>>8); write_data(x1&0xFF);
+    write_cmd(0x2B);
+    write_data(y0>>8); write_data(y0&0xFF);
+    write_data(y1>>8); write_data(y1&0xFF);
+    write_cmd(0x2C);
+    DC_LAT = 1;
+}
+
+// ==================== PRIMITIVAS GRÁFICAS ====================
+void fill_screen(uint16_t color) {
+    set_window(0, 0, TFT_W-1, TFT_H-1);
+    uint32_t n = (uint32_t)TFT_W * TFT_H;
+    uint8_t hi = color>>8, lo = color&0xFF;
+    for(uint32_t i=0;i<n;i++){ spi4_write(hi); spi4_write(lo); }
+}
+
+void draw_pixel(int16_t x, int16_t y, uint16_t color) {
+    if((uint16_t)x >= TFT_W || (uint16_t)y >= TFT_H) return;
+    set_window(x, y, x, y);
+    push_color(color);
+}
+
+void fill_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
+    if(x>=TFT_W || y>=TFT_H || w<=0 || h<=0) return;
+    if(x<0){ w+=x; x=0; }
+    if(y<0){ h+=y; y=0; }
+    if(x+w>TFT_W) w = TFT_W - x;
+    if(y+h>TFT_H) h = TFT_H - y;
+    set_window(x, y, x+w-1, y+h-1);
+    uint32_t n = (uint32_t)w * h;
+    uint8_t hi = color>>8, lo = color&0xFF;
+    for(uint32_t i=0;i<n;i++){ spi4_write(hi); spi4_write(lo); }
+}
+
+void draw_hline(int16_t x, int16_t y, int16_t len, uint16_t color) {
+    fill_rect(x, y, len, 1, color);
+}
+
+void draw_vline(int16_t x, int16_t y, int16_t len, uint16_t color) {
+    fill_rect(x, y, 1, len, color);
+}
+
+void draw_circle(int16_t cx, int16_t cy, int16_t r, uint16_t color) {
+    int16_t x = 0, y = r, d = 3 - 2*r;
+    while(x <= y) {
+        draw_pixel(cx+x, cy+y, color); draw_pixel(cx-x, cy+y, color);
+        draw_pixel(cx+x, cy-y, color); draw_pixel(cx-x, cy-y, color);
+        draw_pixel(cx+y, cy+x, color); draw_pixel(cx-y, cy+x, color);
+        draw_pixel(cx+y, cy-x, color); draw_pixel(cx-y, cy-x, color);
+        if(d < 0) d += 4*x + 6;
+        else { d += 4*(x-y) + 10; y--; }
+        x++;
+    }
+}
+
+void draw_rect_outline(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
+    fill_rect(x, y, w, 1, color);
+    fill_rect(x, y+h-1, w, 1, color);
+    fill_rect(x, y, 1, h, color);
+    fill_rect(x+w-1, y, 1, h, color);
+}
+
+void draw_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
+    int16_t dx = abs(x1-x0), dy = -abs(y1-y0);
+    int16_t sx = (x0<x1) ? 1 : -1, sy = (y0<y1) ? 1 : -1;
+    int16_t err = dx+dy, e2;
+    while(1) {
+        draw_pixel(x0, y0, color);
+        if(x0 == x1 && y0 == y1) break;
+        e2 = 2*err;
+        if(e2 >= dy) { err += dy; x0 += sx; }
+        if(e2 <= dx) { err += dx; y0 += sy; }
+    }
+}
+
+// ==================== TEXTO - FUENTE 5x7 ====================
+/* 95 caracteres imprimibles (0x20-0x7E), 5x7 píxeles */
+static const uint8_t font5x7[95][5] = {
+    {0x00,0x00,0x00,0x00,0x00}, // ' '
+    {0x00,0x00,0x5F,0x00,0x00}, // '!'
+    {0x00,0x07,0x00,0x07,0x00}, // '"'
+    {0x14,0x7F,0x14,0x7F,0x14}, // '#'
+    {0x24,0x2A,0x7F,0x2A,0x12}, // '$'
+    {0x23,0x13,0x08,0x64,0x62}, // '%'
+    {0x36,0x49,0x55,0x22,0x50}, // '&'
+    {0x00,0x05,0x03,0x00,0x00}, // '\''
+    {0x00,0x1C,0x22,0x41,0x00}, // '('
+    {0x00,0x41,0x22,0x1C,0x00}, // ')'
+    {0x14,0x08,0x3E,0x08,0x14}, // '*'
+    {0x08,0x08,0x3E,0x08,0x08}, // '+'
+    {0x00,0x50,0x30,0x00,0x00}, // ','
+    {0x08,0x08,0x08,0x08,0x08}, // '-'
+    {0x00,0x60,0x60,0x00,0x00}, // '.'
+    {0x20,0x10,0x08,0x04,0x02}, // '/'
+    {0x3E,0x51,0x49,0x45,0x3E}, // '0'
+    {0x00,0x42,0x7F,0x40,0x00}, // '1'
+    {0x42,0x61,0x51,0x49,0x46}, // '2'
+    {0x21,0x41,0x45,0x4B,0x31}, // '3'
+    {0x18,0x14,0x12,0x7F,0x10}, // '4'
+    {0x27,0x45,0x45,0x45,0x39}, // '5'
+    {0x3C,0x4A,0x49,0x49,0x30}, // '6'
+    {0x01,0x71,0x09,0x05,0x03}, // '7'
+    {0x36,0x49,0x49,0x49,0x36}, // '8'
+    {0x06,0x49,0x49,0x29,0x1E}, // '9'
+    {0x00,0x36,0x36,0x00,0x00}, // ':'
+    {0x00,0x56,0x36,0x00,0x00}, // ';'
+    {0x08,0x14,0x22,0x41,0x00}, // '<'
+    {0x14,0x14,0x14,0x14,0x14}, // '='
+    {0x00,0x41,0x22,0x14,0x08}, // '>'
+    {0x02,0x01,0x51,0x09,0x06}, // '?'
+    {0x32,0x49,0x79,0x41,0x3E}, // '@'
+    {0x7E,0x11,0x11,0x11,0x7E}, // 'A'
+    {0x7F,0x49,0x49,0x49,0x36}, // 'B'
+    {0x3E,0x41,0x41,0x41,0x22}, // 'C'
+    {0x7F,0x41,0x41,0x22,0x1C}, // 'D'
+    {0x7F,0x49,0x49,0x49,0x41}, // 'E'
+    {0x7F,0x09,0x09,0x09,0x01}, // 'F'
+    {0x3E,0x41,0x49,0x49,0x7A}, // 'G'
+    {0x7F,0x08,0x08,0x08,0x7F}, // 'H'
+    {0x00,0x41,0x7F,0x41,0x00}, // 'I'
+    {0x20,0x40,0x41,0x3F,0x01}, // 'J'
+    {0x7F,0x08,0x14,0x22,0x41}, // 'K'
+    {0x7F,0x40,0x40,0x40,0x40}, // 'L'
+    {0x7F,0x02,0x0C,0x02,0x7F}, // 'M'
+    {0x7F,0x04,0x08,0x10,0x7F}, // 'N'
+    {0x3E,0x41,0x41,0x41,0x3E}, // 'O'
+    {0x7F,0x09,0x09,0x09,0x06}, // 'P'
+    {0x3E,0x41,0x51,0x21,0x5E}, // 'Q'
+    {0x7F,0x09,0x19,0x29,0x46}, // 'R'
+    {0x46,0x49,0x49,0x49,0x31}, // 'S'
+    {0x01,0x01,0x7F,0x01,0x01}, // 'T'
+    {0x3F,0x40,0x40,0x40,0x3F}, // 'U'
+    {0x1F,0x20,0x40,0x20,0x1F}, // 'V'
+    {0x3F,0x40,0x38,0x40,0x3F}, // 'W'
+    {0x63,0x14,0x08,0x14,0x63}, // 'X'
+    {0x07,0x08,0x70,0x08,0x07}, // 'Y'
+    {0x61,0x51,0x49,0x45,0x43}, // 'Z'
+    {0x00,0x7F,0x41,0x41,0x00}, // '['
+    {0x02,0x04,0x08,0x10,0x20}, // '\\'
+    {0x00,0x41,0x41,0x7F,0x00}, // ']'
+    {0x04,0x02,0x01,0x02,0x04}, // '^'
+    {0x40,0x40,0x40,0x40,0x40}, // '_'
+    {0x00,0x01,0x02,0x04,0x00}, // '`'
+    {0x20,0x54,0x54,0x54,0x78}, // 'a'
+    {0x7F,0x48,0x44,0x44,0x38}, // 'b'
+    {0x38,0x44,0x44,0x44,0x20}, // 'c'
+    {0x38,0x44,0x44,0x48,0x7F}, // 'd'
+    {0x38,0x54,0x54,0x54,0x18}, // 'e'
+    {0x08,0x7E,0x09,0x01,0x02}, // 'f'
+    {0x0C,0x52,0x52,0x52,0x3E}, // 'g'
+    {0x7F,0x08,0x04,0x04,0x78}, // 'h'
+    {0x00,0x44,0x7D,0x40,0x00}, // 'i'
+    {0x20,0x40,0x44,0x3D,0x00}, // 'j'
+    {0x7F,0x10,0x28,0x44,0x00}, // 'k'
+    {0x00,0x41,0x7F,0x40,0x00}, // 'l'
+    {0x7C,0x04,0x18,0x04,0x78}, // 'm'
+    {0x7C,0x08,0x04,0x04,0x78}, // 'n'
+    {0x38,0x44,0x44,0x44,0x38}, // 'o'
+    {0x7C,0x14,0x14,0x14,0x08}, // 'p'
+    {0x08,0x14,0x14,0x18,0x7C}, // 'q'
+    {0x7C,0x08,0x04,0x04,0x08}, // 'r'
+    {0x48,0x54,0x54,0x54,0x20}, // 's'
+    {0x04,0x3F,0x44,0x40,0x20}, // 't'
+    {0x3C,0x40,0x40,0x40,0x7C}, // 'u'
+    {0x1C,0x20,0x40,0x20,0x1C}, // 'v'
+    {0x3C,0x40,0x30,0x40,0x3C}, // 'w'
+    {0x44,0x28,0x10,0x28,0x44}, // 'x'
+    {0x0C,0x50,0x50,0x50,0x3C}, // 'y'
+    {0x44,0x64,0x54,0x4C,0x44}  // 'z'
+};
+
+void draw_char(int16_t x, int16_t y, char c, uint16_t fg, uint16_t bg, uint8_t scale) {
+    if(c < 0x20 || c > 0x7E) c = ' ';
+    uint8_t idx = c - 0x20;
+    for(uint8_t col=0; col<5; col++) {
+        uint8_t line = font5x7[idx][col];
+        for(uint8_t row=0; row<7; row++) {
+            uint16_t color = (line & (1<<row)) ? fg : bg;
+            fill_rect(x + col*scale, y + row*scale, scale, scale, color);
+        }
+    }
+}
+
+void draw_string(int16_t x, int16_t y, const char *s, uint16_t fg, uint16_t bg, uint8_t scale) {
+    while(*s) {
+        draw_char(x, y, *s, fg, bg, scale);
+        x += 6*scale;
+        s++;
+    }
+}
