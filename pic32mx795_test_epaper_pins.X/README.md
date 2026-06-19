@@ -1,35 +1,20 @@
-//solo prueba de RB13
+# PIC32MX795F512H - SPI4 Test for E-Paper Pins
 
-#include <xc.h>
+**Descripción:** Prueba de configuración SPI4 en modo Master para PIC32MX795F512H de 64 pines. Genera señal de reloj SCK4 y datos SDO4 para verificar con osciloscopio que la configuración PPS (Peripheral Pin Select) y SPI son correctas.
 
-// Bits de configuración
-#pragma config FNOSC = PRIPLL, POSCMOD = HS, FPLLIDIV = DIV_2, FPLLMUL = MUL_20
-#pragma config FPLLODIV = DIV_1, FPBDIV = DIV_1, FWDTEN = OFF
-#pragma config ICESEL = ICS_PGx1, CP = OFF
+## Características
+- SPI4 Master a 8MHz (SCK4=RB14, SDO4=RF5, SDI4=RF4)
+- Configuración PPS (Peripheral Pin Select) para mapeo de pines
+- Liberación de pines JTAG (DDPCON)
+- Envío continuo de byte 0xAA para verificación con osciloscopio
+- Sistema 80MHz (cristal HS 8MHz + PLL x20)
 
-#define SYS_FREQ 80000000UL
+## Periféricos Utilizados
+- SPI4, GPIO, PPS
 
-void delayMs(uint32_t ms) {
-    uint32_t start = __builtin_mfc0(9, 0);
-    uint32_t ticks = (SYS_FREQ / 2 / 1000) * ms;
-    while ((__builtin_mfc0(9, 0) - start) < ticks);
-}
-
-int main(void) {
-    // Deshabilitar JTAG para liberar los pines RB13 (TDI)
-    DDPCON = 0x00;  // Este es el método correcto y más directo
-
-    // Configurar todos los pines como digitales (deshabilitar ADC)
-    AD1PCFG = 0xFFFF;
-
-    // Configurar RB13 como salida
-    TRISBCLR = (1 << 13);
-
-    while (1) {
-        LATBSET = (1 << 13); // RB13 = 1
-        delayMs(5);
-        LATBCLR = (1 << 13); // RB13 = 0
-        delayMs(5);
-    }
-    return 0;
-}
+## Pines
+| Pin físico | Pin lógico | Función |
+|------------|------------|---------|
+| 29 (TQFP-64) | RB14 | SCK4 |
+| 32 (TQFP-64) | RF5 | SDO4 |
+| 31 (TQFP-64) | RF4 | SDI4 |
