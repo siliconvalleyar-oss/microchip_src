@@ -53,6 +53,64 @@ Repositorio de proyectos MPLAB X para microcontroladores **Microchip PIC18F** y 
 
 ---
 
+## 🗺️ Roadmap / Estado de proyectos
+
+### 🔵 PIC18F — 8-bit
+
+| Proyecto | Estado | Próximos pasos |
+|----------|--------|----------------|
+| [`pic18f452_MAF.X`](pic18f452_MAF.X/) | ✅ Completo | — |
+| [`pic18f4550_i2c.X`](pic18f4550_i2c.X/) | ✅ Completo | — |
+| [`pic18f4550_led_rd0_rd3.X`](pic18f4550_led_rd0_rd3.X/) | ✅ Completo | — |
+| [`pic18f4550_pwm.X`](pic18f4550_pwm.X/) | ✅ Completo | — |
+| [`pic18f4550_terminator.X`](pic18f4550_terminator.X/) | ✅ Completo | — |
+| [`pic18f4550_ws2812_adafruit.X`](pic18f4550_ws2812_adafruit.X/) | ✅ Completo | Integrar DMA para mayor velocidad |
+| [`pic18f45550_out_interrupt.X`](pic18f45550_out_interrupt.X/) | ✅ Completo | — |
+| [`pic18f4620_LCR_oled.X`](pic18f4620_LCR_oled.X/) | 🔬 Experimental | Calibración automática, rango auto |
+| [`pic18f4620_MAF.X`](pic18f4620_MAF.X/) | ✅ Completo | — |
+| [`pic18f4620_detector`](pic18f4620_detector/) | ✅ Completo | Modos de discriminación, salida audio |
+| [`pic18f4620_mrf24j40_tx_rx_claude.X`](pic18f4620_mrf24j40_tx_rx_claude.X/) | ✅ Completo | Encriptación, mesh networking |
+| [`pic18f4620_mrf24j40_tx_rx_deepseek.X`](pic18f4620_mrf24j40_tx_rx_deepseek.X/) | ✅ Completo | Encriptación, mesh networking |
+| [`pic18f4620_ssd1306_oled.X`](pic18f4620_ssd1306_oled.X/) | ✅ Completo | — |
+| [`pic18f4620_usart.X`](pic18f4620_usart.X/) | ✅ Completo | — |
+| [`pic18f46j50.X`](pic18f46j50.X/) | ✅ Completo | — |
+| [`pic18f46j50_i2c.X`](pic18f46j50_i2c.X/) | ✅ Completo | — |
+| [`pic18f46j50_i2c_wallet_freebuff.X`](pic18f46j50_i2c_wallet_freebuff.X/) | 🧪 En desarrollo | Integrar criptografía real (SHA256/ECDSA) |
+| [`pic18f46j50_oled.X`](pic18f46j50_oled.X/) | ✅ Completo | — |
+| [`pic18f46j50_tmp.X`](pic18f46j50_tmp.X/) | ✅ Completo | — |
+| [`pic18f46j50_wallet.X`](pic18f46j50_wallet.X/) | ✅ Completo | Agregar soporte USB HID |
+| [`pic18f46j50_wallet_usb.X`](pic18f46j50_wallet_usb.X/) | 🧪 En desarrollo | Unificar con wallet.X, menú OLED completo |
+
+### 🟢 PIC32MX795 — 32-bit MIPS
+
+| Proyecto | Estado | Próximos pasos |
+|----------|--------|----------------|
+| [`pic32mx795_Epaper_Display.X`](pic32mx795_Epaper_Display.X/) | ✅ Completo | — |
+| [`pic32mx795_Epaper_Display_1v1.X`](pic32mx795_Epaper_Display_1v1.X/) | ✅ Completo | — |
+| [`pic32mx795_Epaper_Display_1v2.X`](pic32mx795_Epaper_Display_1v2.X/) | ✅ Completo | — |
+| [`pic32mx795_Epaper_Display_1v3.X`](pic32mx795_Epaper_Display_1v3.X/) | ✅ Completo | — |
+| [`pic32mx795_Epaper_Display_1v4_claude.X`](pic32mx795_Epaper_Display_1v4_claude.X/) | ✅ Completo | Agregar alarma programable |
+| [`pic32mx795_Epaper_Display_1v5.X`](pic32mx795_Epaper_Display_1v5.X/) | ✅ Completo | Generador de barcodes dinámico |
+| [`pic32mx795_mrf24j40.X`](pic32mx795_mrf24j40.X/) | 🧪 En desarrollo | Stack Zigbee completo, encriptación |
+| [`pic32mx795_st7789_version1.0.X`](pic32mx795_st7789_version1.0.X/) | ✅ Completo | — |
+| [`pic32mx795_st7789_version1.1.X`](pic32mx795_st7789_version1.1.X/) | ✅ Completo | — |
+| [`pic32mx795_st7789_version1.2.X`](pic32mx795_st7789_version1.2.X/) | ✅ Completo | — |
+| [`pic32mx795_st7789_version1.3.X`](pic32mx795_st7789_version1.3.X/) | ✅ Completo | — |
+| [`pic32mx795_st7789_version1.4.X`](pic32mx795_st7789_version1.4.X/) | ✅ Completo | Power pellets, niveles, high score |
+| [`pic32mx795_st7789_version1.5.X`](pic32mx795_st7789_version1.5.X/) | ✅ Completo | Pantalla de inicio, mapa más grande |
+| [`pic32mx795_test_epaper_pins.X`](pic32mx795_test_epaper_pins.X/) | 🔧 Utilidad | — |
+
+### Leyenda
+
+| Icono | Estado |
+|-------|--------|
+| ✅ Completo | Proyecto funcional, compilable y documentado |
+| 🧪 En desarrollo | Funcional pero con mejoras planificadas |
+| 🔬 Experimental | Prueba de concepto, requiere validación |
+| 🔧 Utilidad | Herramienta auxiliar/de prueba |
+
+---
+
 ## 🔧 Herramientas
 
 - **IDE:** MPLAB X IDE
