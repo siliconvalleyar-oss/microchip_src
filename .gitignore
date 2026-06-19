@@ -17,3 +17,28 @@ Desktop.ini
 # Recovery and temp scripts
 recover_projects*.sh
 setup_orphan_branches.sh
+
+# MPLAB X build artifacts
+build/
+dist/
+*/build/
+*/dist/
+*.hex
+*.elf
+*.o
+*.d
+*.map
+*.a
+*.mk
+*.mcs
+*.wat
+
+# Generated MPLAB X config
+nbproject/private/
+*/nbproject/private/
+*/nbproject/Package*
+*/nbproject/configurations.xml.bak
+
+# Editor
+.vscode/
+.idea/
