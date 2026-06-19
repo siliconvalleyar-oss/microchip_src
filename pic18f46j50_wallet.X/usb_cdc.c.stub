@@ -1,0 +1,30 @@
+// Stub USB CDC file - USB functionality disabled
+#include <xc.h>
+
+void USBDeviceInit(void) {
+    // USB disabled
+}
+
+void USBDeviceTasks(void) {
+    // USB disabled
+}
+
+bool USBDeviceAttach(void) {
+    return false;
+}
+
+void USBDeviceDetach(void) {
+    // USB disabled
+}
+
+void USBCDCSendData(uint8_t* data, uint8_t len) {
+    // USB disabled
+}
+
+bool USBCDCIsTransmitted(void) {
+    return true;
+}
+
+uint8_t USBCDCGetData(uint8_t* buffer, uint8_t len) {
+    return 0;
+}

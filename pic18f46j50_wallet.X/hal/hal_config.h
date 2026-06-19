@@ -41,7 +41,7 @@
 #pragma config CP0 = OFF        // Code Protection deshabilitada
 
 // CONFIG2L
-#pragma config OSC = ECPLL      // HS oscillator, PLL enabled
+#pragma config OSC = HSPLL      // HS oscillator, PLL enabled
 #pragma config T1DIG = ON       // Secondary Oscillator clock source may be selected
 #pragma config LPT1OSC = OFF    // Timer1 high power operation
 #pragma config FCMEN = OFF      // Fail-Safe Clock Monitor deshabilitado

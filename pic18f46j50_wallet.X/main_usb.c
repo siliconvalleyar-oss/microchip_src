@@ -1,6 +1,4 @@
-//=============================================================================
-// main.c - Firmware con USB CDC real (MLA)
-//=============================================================================
+// main.c - Con USB CDC real
 #include "hal/hal_config.h"
 #include "hal/hal_led.h"
 #include "hal/hal_button.h"
@@ -16,7 +14,7 @@ static void InitializeSystem(void)
     ANCON0 = 0xFF;
     ANCON1 = 0xFF;
     
-    // Habilitar PLL para 48MHz (cristal 12MHz)
+    // Habilitar PLL para 48MHz
     OSCTUNEbits.PLLEN = 1;
     unsigned int pll_wait = 600;
     while(pll_wait--);
@@ -24,7 +22,7 @@ static void InitializeSystem(void)
     LED_Init();
     BUTTON_Init();
     
-    // Inicializar USB
+    // Inicializar USB (importante: esperar a que se conecte)
     USB_CDC_Init();
     
     // Parpadear LEDs indicando inicio
@@ -32,14 +30,6 @@ static void InitializeSystem(void)
         LED_Toggle(LED0);
         __delay_ms(200);
     }
-    
-    // Mensaje de inicio
-    USB_CDC_WriteString("\r\n");
-    USB_CDC_WriteString("========================================\r\n");
-    USB_CDC_WriteString("  PIC18F46J50 USB CDC Device Ready\r\n");
-    USB_CDC_WriteString("========================================\r\n");
-    USB_CDC_WriteString("Comandos: LED0_ON, LED0_OFF, LED1_ON, LED1_OFF, HELP\r\n");
-    USB_CDC_WriteString("\r\n");
 }
 
 //=============================================================================
@@ -64,18 +54,15 @@ static void HandleCommands(char* cmd)
         USB_CDC_WriteString("LED1 OFF\r\n");
     }
     else if(strcmp(cmd, "HELP") == 0) {
-        USB_CDC_WriteString("\r\nComandos disponibles:\r\n");
-        USB_CDC_WriteString("  LED0_ON   - Enciende LED0\r\n");
-        USB_CDC_WriteString("  LED0_OFF  - Apaga LED0\r\n");
-        USB_CDC_WriteString("  LED1_ON   - Enciende LED1\r\n");
-        USB_CDC_WriteString("  LED1_OFF  - Apaga LED1\r\n");
-        USB_CDC_WriteString("  HELP      - Muestra esta ayuda\r\n\r\n");
+        USB_CDC_WriteString("\r\nComandos:\r\n");
+        USB_CDC_WriteString("  LED0_ON, LED0_OFF\r\n");
+        USB_CDC_WriteString("  LED1_ON, LED1_OFF\r\n");
+        USB_CDC_WriteString("  HELP\r\n\r\n");
     }
     else if(strlen(cmd) > 0) {
-        USB_CDC_WriteString("Comando no reconocido: ");
+        USB_CDC_WriteString("? ");
         USB_CDC_WriteString(cmd);
         USB_CDC_WriteString("\r\n");
-        USB_CDC_WriteString("Escriba HELP para ver comandos\r\n");
     }
 }
 
@@ -102,7 +89,7 @@ static void ProcessTasks(void)
         HandleCommands(usb_rx_buffer);
     }
     
-    // Leer botones cada 100ms
+    // Leer botones
     if(++counter >= 10) {
         counter = 0;
         
@@ -133,3 +120,4 @@ void main(void)
         ProcessTasks();
     }
 }
+

@@ -3,14 +3,12 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>pic18f46j50_wallet</name>
-            <creation-uuid>d0c0313a-5aeb-4819-9663-2ebf71d9b6c8</creation-uuid>
+            <name>pic18f46j50_i2c</name>
+            <creation-uuid>bdfd1cea-6413-4af7-b65c-5c512e9bc719</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
-            <sourceRootList>
-                <sourceRootElem>.</sourceRootElem>
-            </sourceRootList>
+            <sourceRootList/>
             <confList>
                 <confElem>
                     <name>default</name>

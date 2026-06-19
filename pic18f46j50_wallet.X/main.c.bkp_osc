@@ -16,6 +16,28 @@ static void InitializeSystem(void)
     ANCON0 = 0xFF;
     ANCON1 = 0xFF;
     
+    // Configurar oscilador interno a 12MHz
+    OSCCONbits.IRCF = 0b1110;   // 12MHz
+    OSCCONbits.SCS = 0b10;      // Usar oscilador interno
+    OSCTUNEbits.PLLEN = 0;      // PLL deshabilitado
+    while(!OSCCONbits.HFIOFS);  // Esperar estabilizacion
+    
+    // Comentar esta línea:
+    // OSCTUNEbits.PLLEN = 1;
+    
+    unsigned int pll_wait = 600;
+    while(pll_wait--);
+    
+    LED_Init();
+    BUTTON_Init();
+    
+    // Resto del código...
+}
+/*static void InitializeSystem(void)
+{
+    ANCON0 = 0xFF;
+    ANCON1 = 0xFF;
+    
     // Habilitar PLL para 48MHz (cristal 12MHz)
     OSCTUNEbits.PLLEN = 1;
     unsigned int pll_wait = 600;
@@ -40,7 +62,7 @@ static void InitializeSystem(void)
     USB_CDC_WriteString("========================================\r\n");
     USB_CDC_WriteString("Comandos: LED0_ON, LED0_OFF, LED1_ON, LED1_OFF, HELP\r\n");
     USB_CDC_WriteString("\r\n");
-}
+}*/
 
 //=============================================================================
 // Procesar comandos
