@@ -5,16 +5,16 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="hal" displayName="hal" projectFiles="true">
-        <itemPath>hal/FSconfig.h</itemPath>
-        <itemPath>hal/hal_button.h</itemPath>
-        <itemPath>hal/hal_config.h</itemPath>
-        <itemPath>hal/hal_i2c.h</itemPath>
-        <itemPath>hal/hal_led.h</itemPath>
-        <itemPath>hal/spi_sd.h</itemPath>
-        <itemPath>hal/ssd1306.h</itemPath>
+        <itemPath>inc/hal/FSconfig.h</itemPath>
+        <itemPath>inc/hal/hal_button.h</itemPath>
+        <itemPath>inc/hal/hal_config.h</itemPath>
+        <itemPath>inc/hal/hal_i2c.h</itemPath>
+        <itemPath>inc/hal/hal_led.h</itemPath>
+        <itemPath>inc/hal/spi_sd.h</itemPath>
+        <itemPath>inc/hal/ssd1306.h</itemPath>
       </logicalFolder>
       <logicalFolder name="usb" displayName="usb" projectFiles="true">
-        <itemPath>usb/usb_cdc.h</itemPath>
+        <itemPath>inc/usb/usb_cdc.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -24,13 +24,13 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>hal_button.c</itemPath>
-      <itemPath>hal_i2c.c</itemPath>
-      <itemPath>hal_led.c</itemPath>
-      <itemPath>main.c</itemPath>
-      <itemPath>spi_sd.c</itemPath>
-      <itemPath>ssd1306.c</itemPath>
-      <itemPath>usb_cdc.c</itemPath>
+      <itemPath>src/hal_button.c</itemPath>
+      <itemPath>src/hal_i2c.c</itemPath>
+      <itemPath>src/hal_led.c</itemPath>
+      <itemPath>src/main.c</itemPath>
+      <itemPath>src/spi_sd.c</itemPath>
+      <itemPath>src/ssd1306.c</itemPath>
+      <itemPath>src/usb_cdc.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
