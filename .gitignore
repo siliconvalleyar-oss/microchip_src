@@ -21,17 +21,40 @@ setup_orphan_branches.sh
 # MPLAB X build artifacts
 build/
 dist/
+_build/
+out/
+debug/
+default/
 */build/
 */dist/
-*.hex
+*/*/build/
+*/*/dist/
+
+# Generated build files
 *.elf
+*.hex
+*.cof
+*.log
+*.lst
 *.o
+*.obj
 *.d
 *.map
 *.a
+*.lib
+*.sym
+*.i
+*.s
+*.pre
 *.mk
 *.mcs
 *.wat
+*.generated
+
+# MPLAB X auto-generated makefiles
+nbproject/Makefile-*
+nbproject/Makefile-*.mk
+nbproject/Package-*.bash
 
 # Generated MPLAB X config
 nbproject/private/
@@ -39,6 +62,10 @@ nbproject/private/
 */nbproject/Package*
 */nbproject/configurations.xml.bak
 
+# Makefile-default artifacts
+Makefile-default*
+
 # Editor
 .vscode/
 .idea/
+
