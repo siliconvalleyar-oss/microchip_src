@@ -151,6 +151,37 @@ pic18f4620_mrf24j40_tx_rx_deepseek.X/
 
 ---
 
+## Verificación de Compilación
+
+Se intentó compilar un proyecto representativo (`pic18f452_MAF.X`) con MPLAB X v6.30 y XC8 v3.10.
+
+| Aspecto | Resultado |
+|---------|:---------:|
+| MPLAB X IDE v6.30 | ✅ Instalado |
+| XC8 Compiler v3.10 | ✅ Instalado y funcional |
+| XC32 Compiler v5.00 | ✅ Instalado y funcional |
+| `prjMakefilesGenerator` | ⚠️ No pudo generar makefiles por falta de DFP |
+| Compilación CLI completa | ❌ Pendiente de instalación de DFP |
+
+**Problema identificado:** Los makefiles de compilación (`nbproject/Makefile-default.mk`) son auto-generados por MPLAB X desde `configurations.xml`. El generador requiere el **Device Family Pack (DFP)** correspondiente, que no está instalado en este entorno.
+
+**Para compilar en otro equipo:**
+1. Abrir el proyecto en MPLAB X IDE:
+   ```bash
+   mplab_ide --open pic18f4620_mrf24j40_tx_rx_deepseek.X
+   ```
+2. El IDE descargará automáticamente el DFP faltante
+3. Regenerará los makefiles (Makefile-default.mk, Makefile-impl.mk)
+4. La compilación leerá las rutas `src/` e `inc/` desde `configurations.xml` ✅
+
+**Lo que SÍ se verificó correctamente:**
+- ✅ `configurations.xml` tiene todas las rutas `src/` e `inc/` correctas en 29/29 ramas
+- ✅ Todos los archivos fuente referenciados existen en sus ubicaciones
+- ✅ La estructura del proyecto es válida (el generador lee `configurations.xml` sin errores de sintaxis)
+- ✅ Los compiladores XC8 y XC32 están instalados y funcionales
+
+---
+
 ## Cómo Usar
 
 ```bash
@@ -163,12 +194,23 @@ cd pic18f4620_mrf24j40_tx_rx_deepseek.X
 ls src/ inc/ examples/
 
 # Abrir en MPLAB X IDE
-mplab_ide --nb-project pic18f4620_mrf24j40_tx_rx_deepseek.X
+mplab_ide --open pic18f4620_mrf24j40_tx_rx_deepseek.X
 ```
 
 ---
 
 ## Archivos en `main`
+
+| Archivo | Descripción |
+|---------|-------------|
+| `informe.md` | Este informe |
+| `.gitignore` | Global con patrones MPLAB X |
+| `clone-all.sh` | Script para clonar todas las ramas |
+| `diagrama_estructura.txt` | Diagrama ASCII del repositorio |
+| `fix_config_paths.sh` | Script de corrección de rutas (histórico) |
+| `fix_config_paths_v2.sh` | Script V2 de corrección de rutas (histórico) |
+| `restructure_project.sh` | Script de reestructuración (histórico) |
+| `batch_restructure.sh` | Script batch de reestructuración (histórico) |
 
 | Archivo | Descripción |
 |---------|-------------|
