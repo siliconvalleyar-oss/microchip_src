@@ -1,207 +1,179 @@
 # Informe de Reestructuración - Microchip PIC
 
-## Estado de Sincronización
+## Estado General
 
 | Elemento | Cantidad | Estado |
 |----------|:--------:|:------:|
-| Ramas locales | **34** (main + 33 proyectos) | ✅ Trackeando origin |
-| Ramas en remote | **35** (main + 34 proyectos) | ✅ Pusheadas |
-| Tags locales | **54** | ✅ Creados |
-| Tags en remote | **54** | ✅ Pusheados |
-| Proyectos reestructurados | **31/33** | ✅ |
-| Proyectos sin código fuente | **3** | ⚠️ Solo README + CHANGELOG |
-
-## Push confirmado
-
-```
-$ git push --all origin
-Everything up-to-date
-$ git push --tags origin
-Everything up-to-date
-```
-
-**Remoto:** `origin → https://github.com/siliconvalleyar-oss/microchip_src.git`
+| Ramas en remote | **36** (main + 35 proyectos) | ✅ |
+| Tags | **49** (35 proyecto + 7 st7789 + 7 epaper) | ✅ |
+| Proyectos con `nbproject/configurations.xml` | **30/35** | ✅ |
+| Proyectos sin `nbproject/` | **5** | ℹ️ Sin código fuente o sin IDE |
+| Proyectos con `.gitignore` | **35/35** | ✅ |
+| Proyectos con `src/` + `inc/` + `examples/` | **35/35** | ✅ |
 
 ---
 
-## Ramas Locales → Remotos (Tracking)
+## Cambios Realizados (Post-Restructuración Inicial)
 
-### PIC18F (21 ramas)
+### 1. Corrección de Tags
 
-| Rama Local | Tracking | Commit |
-|-----------|----------|--------|
-| `pic18f452_MAF.X` | `origin/...` | `319b794` |
-| `pic18f4550_i2c.X` | `origin/...` | `582f12a` |
-| `pic18f4550_led_rd0_rd3.X` | `origin/...` | `75a7672` |
-| `pic18f4550_pwm.X` | `origin/...` | `5d4c81a` |
-| `pic18f4550_terminator.X` | `origin/...` | `356caed` |
-| `pic18f4550_ws2812_adafruit.X` | `origin/...` | `3a60922` |
-| `pic18f45550_out_interrupt.X` | `origin/...` | `04e0c80` |
-| `pic18f4620_LCR_oled.X` | `origin/...` | `0428f3a` |
-| `pic18f4620_MAF.X` | `origin/...` | `7690224` |
-| `pic18f4620_mrf24j40_tx_rx_claude.X` | `origin/...` | `a4c5fc2` |
-| `pic18f4620_mrf24j40_tx_rx_deepseek.X` | `origin/...` | `ef9f4ad` |
-| `pic18f4620_ssd1306_oled.X` | `origin/...` | `ac1c6cc` |
-| `pic18f4620_usart.X` | `origin/...` | `1cf6c92` |
-| `pic18f4620_detector` | `origin/...` | `dec1ea2` |
-| `pic18f46j50.X` | `origin/...` | `9260375` |
-| `pic18f46j50_i2c.X` | `origin/...` | `9c55293` |
-| `pic18f46j50_i2c_wallet_freebuff.X` | `origin/...` | `93f1677` |
-| `pic18f46j50_oled.X` | `origin/...` | `d18c527` |
-| `pic18f46j50_tmp.X` | `origin/...` | `024ac66` |
-| `pic18f46j50_wallet.X` | `origin/...` | `a72a8db` |
-| `pic18f46j50_wallet_usb.X` | `origin/...` | `19148eb` |
+Se identificaron y corrigieron **13 tags incorrectos** que apuntaban a commits de `main` en vez del primer commit de cada rama:
 
-### PIC32MX (14 ramas)
+| Tag | Antes | Después |
+|-----|-------|---------|
+| `pic32mx795_Epaper_Display*_1v*.X-v1.0.0` (6 tags) | `1ac124f` (commit README en main) | Primer commit de cada rama |
+| `pic32mx795_st7789_version*.X-v1.0.0` (6 tags) | `accfb4b` (commit README en main) | Primer commit de cada rama |
+| `pic32mx795_test_epaper_pins.X-v1.0.0` | `1ac124f` | `98c4745` |
 
-| Rama Local | Tracking | Commit |
-|-----------|----------|--------|
-| `pic32mx795_Epaper_Display.X` | `origin/...` | `228d07c` |
-| `pic32mx795_Epaper_Display_1v1.X` | `origin/...` | `82c8cd5` |
-| `pic32mx795_Epaper_Display_1v2.X` | `origin/...` | `01ae558` |
-| `pic32mx795_Epaper_Display_1v3.X` | `origin/...` | `f59dc07` |
-| `pic32mx795_Epaper_Display_1v4_claude.X` | `origin/...` | `eb65694` |
-| `pic32mx795_Epaper_Display_1v5.X` | `origin/...` | `fd837d3` |
-| `pic32mx795_mrf24j40.X` | `origin/...` | `57ceebc` ✅ **FIXED** |
-| `pic32mx795_st7789_version1.0.X` | `origin/...` | `a5c2a3d` |
-| `pic32mx795_st7789_version1.1.X` | `origin/...` | `51783ed` |
-| `pic32mx795_st7789_version1.2.X` | `origin/...` | `c09dd9e` |
-| `pic32mx795_st7789_version1.3.X` | `origin/...` | `b11370b` |
-| `pic32mx795_st7789_version1.4.X` | `origin/...` | `8cbfe2b` |
-| `pic32mx795_st7789_version1.5.X` | `origin/...` | `7a5787e` |
-| `pic32mx795_test_epaper_pins.X` | `origin/...` | `2c71573` |
+Además se crearon **2 tags nuevos** para ramas que no tenían:
+- `pic18f46j50_wallet_usb.X-v1.0.0`
+- `pic18f4620_detector-v1.0.0`
 
-### Rama principal
+### 2. Corrección de Rutas en `nbproject/configurations.xml`
 
-| Rama | Tracking | Commit |
-|------|----------|--------|
-| `main` | `origin/main` | `8e8a19f` |
+Los archivos `configurations.xml` tenían rutas hardcodeadas a las ubicaciones originales (ej: `main.c`). Se actualizaron **28 ramas** para que apunten a `src/main.c` e `inc/archivo.h`.
+
+```
+Antes:  <itemPath>main.c</itemPath>        ❌ No encuentra el archivo
+Despues: <itemPath>src/main.c</itemPath>   ✅ Ruta correcta
+```
+
+**Corrección adicional**: En `pic18f46j50_wallet.X` se movieron los subdirectorios `hal/` y `usb/` dentro de `inc/` para que coincidieran con las rutas de `configurations.xml`:
+- `hal/FSconfig.h` → `inc/hal/FSconfig.h`
+- `usb/usb_cdc.h` → `inc/usb/usb_cdc.h`
+
+### 3. Verificación de Coherencia de Rutas
+
+Se verificaron **29/29 ramas con `configurations.xml`** — todas las rutas `src/file.c` e `inc/file.h` coinciden con archivos reales en disco. ✅
+
+### 4. Creación de `nbproject/` para `pic32mx795_mrf24j40.X`
+
+Esta rama fue reconstruida desde `main` y no tenía archivos de proyecto MPLAB X. Se crearon:
+- `nbproject/configurations.xml` — 9 `.cpp` en `src/`, 8 `.hpp` en `inc/`, PIC32MX795F512H + XC32
+- `nbproject/project.xml` — Metadatos del proyecto
+
+### 5. `.gitignore` Global y por Proyecto
+
+- **Global (`main`)**: Mejorado con patrones adicionales: `_build/`, `out/`, `debug/`, `default/`, `*.cof`, `*.lst`, `*.obj`, `*.lib`, `*.sym`, `*.i`, `*.s`, `*.pre`, `*.generated`, `nbproject/Makefile-*`, `Makefile-default*`
+- **`pic18f46j50_wallet_usb.X`**: Agregado `.gitignore` faltante
+
+### 6. Scripts Adicionales
+
+- **`clone-all.sh`**: Clona las 36 ramas en directorios separados usando `git worktree`. Cada proyecto queda listo para trabajar en su propio directorio.
+- **`diagrama_estructura.txt`**: Diagrama ASCII de la estructura completa del repositorio.
 
 ---
 
-## Tags (54 total)
+## Estructura Final (`src/` + `inc/` + `examples/`)
 
-### Consolidación ST7789
-| Tag | Contenido | Commit |
-|-----|-----------|--------|
-| `st7789/v1.0` | pic32mx795_st7789_version1.0.X | 58b9119 |
-| `st7789/v1.1` | pic32mx795_st7789_version1.1.X | 61afe86 |
-| `st7789/v1.2` | pic32mx795_st7789_version1.2.X | 88de463 |
-| `st7789/v1.3` | pic32mx795_st7789_version1.3.X | 8c6cf14 |
-| `st7789/v1.4` | pic32mx795_st7789_version1.4.X | 5b91339 |
-| `st7789/v1.5` | pic32mx795_st7789_version1.5.X | 6154bc3 |
-| `st7789/v2.0` | Refactor con ST7789_common/ | 9cc7d47 |
+```
+pic18f4620_mrf24j40_tx_rx_deepseek.X/
+├── src/           main.c, mrf24j40.c, oled.c, spi.c, usart.c
+├── inc/           config.h, mrf24j40.h, oled.h, spi.h, usart.h
+├── examples/      example_main.c
+├── Makefile
+├── nbproject/
+│   ├── project.xml
+│   └── configurations.xml    ← rutas actualizadas a src/ inc/
+├── .gitignore                ← excluye build/, dist/, *.hex, *.elf, etc.
+├── README.md
+└── CHANGELOG.md
+```
 
-### Consolidación Epaper
-| Tag | Contenido | Commit |
-|-----|-----------|--------|
-| `epaper/v1.0` | pic32mx795_Epaper_Display.X (base) | cc646ed |
-| `epaper/v1.1` | pic32mx795_Epaper_Display_1v1.X | fb363fd |
-| `epaper/v1.2` | pic32mx795_Epaper_Display_1v2.X | 62b8616 |
-| `epaper/v1.3` | pic32mx795_Epaper_Display_1v3.X | debc811 |
-| `epaper/v1.4` | pic32mx795_Epaper_Display_1v4_claude.X | e27d816 |
-| `epaper/v1.5` | pic32mx795_Epaper_Display_1v5.X | 7ce371e |
-| `epaper/v2.0` | Restructuración src/ inc/ examples/ | 228d07c |
+---
+
+## Ramas (36 en remote)
+
+### PIC18F (23 ramas)
+
+| Rama | src/ | inc/ | configurations.xml | Estado |
+|------|:----:|:----:|:------------------:|:------:|
+| `pic18f452_MAF.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic18f4550_i2c.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic18f4550_led_rd0_rd3.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic18f4550_pwm.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic18f4550_terminator.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic18f4550_ws2812_adafruit.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic18f45550_out_interrupt.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic18f4620_LCR_oled.X` | 0 | 0 | — Sin fuentes | ℹ️ |
+| `pic18f4620_MAF.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic18f4620_mrf24j40_tx_rx_claude.X` | 7 | 8 | ✅ Corregido | ✅ |
+| `pic18f4620_mrf24j40_tx_rx_deepseek.X` | 5 | 5 | ✅ Corregido | ✅ |
+| `pic18f4620_ssd1306_oled.X` | 3 | 3 | ✅ Corregido | ✅ |
+| `pic18f4620_usart.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic18f4620_detector` | 5 | 5 | — No MPLAB X | ℹ️ |
+| `pic18f46j50.X` | 8 | 7 | ✅ Corregido | ✅ |
+| `pic18f46j50_i2c.X` | 3 | 4 | ✅ Corregido | ✅ |
+| `pic18f46j50_i2c_wallet_freebuff.X` | 0 | 0 | — Sin fuentes | ℹ️ |
+| `pic18f46j50_oled.X` | 2 | 1 | ✅ Corregido | ✅ |
+| `pic18f46j50_tmp.X` | 0 | 0 | — Sin fuentes | ℹ️ |
+| `pic18f46j50_wallet.X` | 7 | 9 | ✅ Corregido + hal/ usb/ | ✅ |
+| `pic18f46j50_wallet_usb.X` | 4 | 5 | ✅ Corregido | ✅ |
+
+### PIC32MX (13 ramas)
+
+| Rama | src/ | inc/ | configurations.xml | Estado |
+|------|:----:|:----:|:------------------:|:------:|
+| `pic32mx795_Epaper_Display.X` | 2 | 4 | ✅ Corregido | ✅ |
+| `pic32mx795_Epaper_Display_1v1.X` | 4 | 8 | ✅ Corregido | ✅ |
+| `pic32mx795_Epaper_Display_1v2.X` | 4 | 8 | ✅ Corregido | ✅ |
+| `pic32mx795_Epaper_Display_1v3.X` | 3 | 7 | ✅ Corregido | ✅ |
+| `pic32mx795_Epaper_Display_1v4_claude.X` | 6 | 7 | ✅ Corregido | ✅ |
+| `pic32mx795_Epaper_Display_1v5.X` | 4 | 9 | ✅ Corregido | ✅ |
+| `pic32mx795_mrf24j40.X` | 9 | 8 | ✅ **Creado** | ✅ |
+| `pic32mx795_st7789_version1.0.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic32mx795_st7789_version1.1.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic32mx795_st7789_version1.2.X` | 1 | 0 | ✅ Corregido | ✅ |
+| `pic32mx795_st7789_version1.3.X` | 3 | 5 | ✅ Corregido | ✅ |
+| `pic32mx795_st7789_version1.4.X` | 4 | 5 | ✅ Corregido | ✅ |
+| `pic32mx795_st7789_version1.5.X` | 4 | 5 | ✅ Corregido | ✅ |
+| `pic32mx795_test_epaper_pins.X` | 1 | 0 | ✅ Corregido | ✅ |
+
+---
+
+## Tags (49)
+
+### Tags de Versiones Consolidadas
+
+| ST7789 | Commit | Epaper | Commit |
+|--------|--------|--------|--------|
+| `st7789/v1.0` | 58b9119 | `epaper/v1.0` | cc646ed |
+| `st7789/v1.1` | 61afe86 | `epaper/v1.1` | fb363fd |
+| `st7789/v1.2` | 88de463 | `epaper/v1.2` | 62b8616 |
+| `st7789/v1.3` | 8c6cf14 | `epaper/v1.3` | debc811 |
+| `st7789/v1.4` | 5b91339 | `epaper/v1.4` | e27d816 |
+| `st7789/v1.5` | 6154bc3 | `epaper/v1.5` | 7ce371e |
+| `st7789/v2.0` | Restructuring | `epaper/v2.0` | Restructuring |
 
 ### Tags por Proyecto
-33 tags `{nombre}-v1.0.0` para cada proyecto.
+
+35 tags `{nombre-rama}-v1.0.0` apuntando al **primer commit** de cada rama. ✅ Verificados.
 
 ---
 
-## Verificación en Disco (Checkout Real)
+## Cómo Usar
 
-Se realizó checkout real a 4 ramas representativas para verificar la estructura en disco:
+```bash
+# Clonar todas las ramas
+./clone-all.sh
 
-### 1. `pic18f452_MAF.X` (Proyecto simple)
-```
-📁 pic18f452_MAF.X/
-├── src/           main.c
-├── inc/           (vacio - sin headers propios)
-├── examples/      example_main.c
-├── Makefile
-├── nbproject/
-├── README.md      pic18f452_MAF - Sensor MAF para PIC18F452
-└── CHANGELOG.md
-```
+# O trabajar con una sola rama
+git checkout pic18f4620_mrf24j40_tx_rx_deepseek.X
+cd pic18f4620_mrf24j40_tx_rx_deepseek.X
+ls src/ inc/ examples/
 
-### 2. `pic18f4620_mrf24j40_tx_rx_claude.X` (Proyecto complejo)
+# Abrir en MPLAB X IDE
+mplab_ide --nb-project pic18f4620_mrf24j40_tx_rx_deepseek.X
 ```
-📁 pic18f4620_mrf24j40_tx_rx_claude.X/
-├── src/           i2c_sw.c, leds_btns.c, main.c, mrf24j40.c, oled.c, spi.c, usart.c  (7)
-├── inc/           config.h, i2c_sw.h, leds_btns.h, mrf24j40.h, oled.h, pic18_fuses.h, spi.h, usart.h  (8)
-├── examples/      example_main.c
-├── Makefile
-├── nbproject/
-├── README.md
-└── CHANGELOG.md
-```
-
-### 3. `pic32mx795_Epaper_Display_1v4_claude.X` (PIC32 con C/C++ mixto)
-```
-📁 pic32mx795_Epaper_Display_1v4_claude.X/
-├── src/           epaper.c, epaper_display.c, epaper_refresh.c, fonts.cpp, fonts_manager.c, main.c  (6)
-├── inc/           boards.h, custom_image_example.h, epaper_display.h, epaper.h, epaper_refresh.h, fonts.h, fonts_manager.h  (7)
-├── examples/      example_main.c
-├── Makefile
-├── nbproject/
-├── README.md
-└── CHANGELOG.md
-```
-
-### 4. `pic18f46j50_wallet_usb.X` (Recién arreglada - limpia de otros proyectos)
-```
-📁 pic18f46j50_wallet_usb.X/
-├── src/           i2c.c, main.c, oled.c, wallet.c  (4)
-├── inc/           fonts.h, hardware_cfg.h, i2c.h, oled.h, wallet.h  (5)
-├── examples/      example_main.c
-├── exec.sh
-├── usb/
-├── Makefile
-├── nbproject/
-├── README.md
-└── CHANGELOG.md
-```
-
-**Resultado:** Las 4 ramas verificadas en disco tienen la estructura `src/`, `inc/`, `examples/` correcta, con `Makefile`, `nbproject/`, `README.md` y `CHANGELOG.md` preservados.
 
 ---
 
-## Proyectos Reestructurados
+## Archivos en `main`
 
-| Rama | src/ | inc/ | Estado |
-|------|:----:|:----:|:------:|
-| pic18f452_MAF.X | 1 | 0 | ✅ |
-| pic18f4550_i2c.X | 1 | 0 | ✅ |
-| pic18f4550_led_rd0_rd3.X | 1 | 0 | ✅ |
-| pic18f4550_pwm.X | 1 | 0 | ✅ |
-| pic18f4550_terminator.X | 1 | 0 | ✅ |
-| pic18f4550_ws2812_adafruit.X | 1 | 0 | ✅ |
-| pic18f45550_out_interrupt.X | 1 | 0 | ✅ |
-| pic18f4620_LCR_oled.X | 0 | 0 | ⚠️ Sin fuentes |
-| pic18f4620_MAF.X | 1 | 0 | ✅ |
-| pic18f4620_mrf24j40_tx_rx_claude.X | 7 | 8 | ✅ |
-| pic18f4620_mrf24j40_tx_rx_deepseek.X | 5 | 5 | ✅ |
-| pic18f4620_ssd1306_oled.X | 3 | 3 | ✅ |
-| pic18f4620_usart.X | 1 | 0 | ✅ |
-| pic18f4620_detector | 5 | 5 | ✅ (nueva rama) |
-| pic18f46j50.X | 8 | 7 | ✅ |
-| pic18f46j50_i2c.X | 3 | 4 | ✅ |
-| pic18f46j50_i2c_wallet_freebuff.X | 0 | 0 | ⚠️ Sin fuentes |
-| pic18f46j50_oled.X | 2 | 1 | ✅ |
-| pic18f46j50_tmp.X | 0 | 0 | ⚠️ Sin fuentes |
-| pic18f46j50_wallet.X | 7 | 1 | ✅ |
-| pic18f46j50_wallet_usb.X | 4 | 5 | ✅ (arreglada) |
-| pic32mx795_Epaper_Display.X | 2 | 4 | ✅ |
-| pic32mx795_Epaper_Display_1v1.X | 4 | 8 | ✅ |
-| pic32mx795_Epaper_Display_1v2.X | 4 | 8 | ✅ |
-| pic32mx795_Epaper_Display_1v3.X | 3 | 7 | ✅ |
-| pic32mx795_Epaper_Display_1v4_claude.X | 6 | 7 | ✅ |
-| pic32mx795_Epaper_Display_1v5.X | 4 | 9 | ✅ |
-| pic32mx795_mrf24j40.X | 9 | 8 | ✅ (arreglada) |
-| pic32mx795_st7789_version1.0.X | 1 | 0 | ✅ |
-| pic32mx795_st7789_version1.1.X | 1 | 0 | ✅ |
-| pic32mx795_st7789_version1.2.X | 1 | 0 | ✅ |
-| pic32mx795_st7789_version1.3.X | 3 | 5 | ✅ |
-| pic32mx795_st7789_version1.4.X | 4 | 5 | ✅ |
-| pic32mx795_st7789_version1.5.X | 4 | 5 | ✅ |
-| pic32mx795_test_epaper_pins.X | 1 | 0 | ✅ |
+| Archivo | Descripción |
+|---------|-------------|
+| `informe.md` | Este informe |
+| `.gitignore` | Global con patrones MPLAB X |
+| `clone-all.sh` | Script para clonar todas las ramas |
+| `diagrama_estructura.txt` | Diagrama ASCII del repositorio |
+| `fix_config_paths.sh` | Script de corrección de rutas (histórico) |
