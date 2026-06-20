@@ -108,12 +108,100 @@ Everything up-to-date
 
 ---
 
+## Verificación en Disco (Checkout Real)
+
+Se realizó checkout real a 4 ramas representativas para verificar la estructura en disco:
+
+### 1. `pic18f452_MAF.X` (Proyecto simple)
+```
+📁 pic18f452_MAF.X/
+├── src/           main.c
+├── inc/           (vacio - sin headers propios)
+├── examples/      example_main.c
+├── Makefile
+├── nbproject/
+├── README.md      pic18f452_MAF - Sensor MAF para PIC18F452
+└── CHANGELOG.md
+```
+
+### 2. `pic18f4620_mrf24j40_tx_rx_claude.X` (Proyecto complejo)
+```
+📁 pic18f4620_mrf24j40_tx_rx_claude.X/
+├── src/           i2c_sw.c, leds_btns.c, main.c, mrf24j40.c, oled.c, spi.c, usart.c  (7)
+├── inc/           config.h, i2c_sw.h, leds_btns.h, mrf24j40.h, oled.h, pic18_fuses.h, spi.h, usart.h  (8)
+├── examples/      example_main.c
+├── Makefile
+├── nbproject/
+├── README.md
+└── CHANGELOG.md
+```
+
+### 3. `pic32mx795_Epaper_Display_1v4_claude.X` (PIC32 con C/C++ mixto)
+```
+📁 pic32mx795_Epaper_Display_1v4_claude.X/
+├── src/           epaper.c, epaper_display.c, epaper_refresh.c, fonts.cpp, fonts_manager.c, main.c  (6)
+├── inc/           boards.h, custom_image_example.h, epaper_display.h, epaper.h, epaper_refresh.h, fonts.h, fonts_manager.h  (7)
+├── examples/      example_main.c
+├── Makefile
+├── nbproject/
+├── README.md
+└── CHANGELOG.md
+```
+
+### 4. `pic18f46j50_wallet_usb.X` (Recién arreglada - limpia de otros proyectos)
+```
+📁 pic18f46j50_wallet_usb.X/
+├── src/           i2c.c, main.c, oled.c, wallet.c  (4)
+├── inc/           fonts.h, hardware_cfg.h, i2c.h, oled.h, wallet.h  (5)
+├── examples/      example_main.c
+├── exec.sh
+├── usb/
+├── Makefile
+├── nbproject/
+├── README.md
+└── CHANGELOG.md
+```
+
+**Resultado:** Las 4 ramas verificadas en disco tienen la estructura `src/`, `inc/`, `examples/` correcta, con `Makefile`, `nbproject/`, `README.md` y `CHANGELOG.md` preservados.
+
+---
+
 ## Proyectos Reestructurados
 
 | Rama | src/ | inc/ | Estado |
 |------|:----:|:----:|:------:|
-| pic32mx795_mrf24j40.X | **9** (.cpp) | **8** (.hpp) | ✅ **FIXED** |
-
-Módulos ahora disponibles: MRF24J40, Protocolo, SPI4, I2C, UART, GPIO, OLED SSD1306, Cifrado.
-
-El resto de proyectos mantienen su estructura reportada anteriormente.
+| pic18f452_MAF.X | 1 | 0 | ✅ |
+| pic18f4550_i2c.X | 1 | 0 | ✅ |
+| pic18f4550_led_rd0_rd3.X | 1 | 0 | ✅ |
+| pic18f4550_pwm.X | 1 | 0 | ✅ |
+| pic18f4550_terminator.X | 1 | 0 | ✅ |
+| pic18f4550_ws2812_adafruit.X | 1 | 0 | ✅ |
+| pic18f45550_out_interrupt.X | 1 | 0 | ✅ |
+| pic18f4620_LCR_oled.X | 0 | 0 | ⚠️ Sin fuentes |
+| pic18f4620_MAF.X | 1 | 0 | ✅ |
+| pic18f4620_mrf24j40_tx_rx_claude.X | 7 | 8 | ✅ |
+| pic18f4620_mrf24j40_tx_rx_deepseek.X | 5 | 5 | ✅ |
+| pic18f4620_ssd1306_oled.X | 3 | 3 | ✅ |
+| pic18f4620_usart.X | 1 | 0 | ✅ |
+| pic18f4620_detector | 5 | 5 | ✅ (nueva rama) |
+| pic18f46j50.X | 8 | 7 | ✅ |
+| pic18f46j50_i2c.X | 3 | 4 | ✅ |
+| pic18f46j50_i2c_wallet_freebuff.X | 0 | 0 | ⚠️ Sin fuentes |
+| pic18f46j50_oled.X | 2 | 1 | ✅ |
+| pic18f46j50_tmp.X | 0 | 0 | ⚠️ Sin fuentes |
+| pic18f46j50_wallet.X | 7 | 1 | ✅ |
+| pic18f46j50_wallet_usb.X | 4 | 5 | ✅ (arreglada) |
+| pic32mx795_Epaper_Display.X | 2 | 4 | ✅ |
+| pic32mx795_Epaper_Display_1v1.X | 4 | 8 | ✅ |
+| pic32mx795_Epaper_Display_1v2.X | 4 | 8 | ✅ |
+| pic32mx795_Epaper_Display_1v3.X | 3 | 7 | ✅ |
+| pic32mx795_Epaper_Display_1v4_claude.X | 6 | 7 | ✅ |
+| pic32mx795_Epaper_Display_1v5.X | 4 | 9 | ✅ |
+| pic32mx795_mrf24j40.X | 9 | 8 | ✅ (arreglada) |
+| pic32mx795_st7789_version1.0.X | 1 | 0 | ✅ |
+| pic32mx795_st7789_version1.1.X | 1 | 0 | ✅ |
+| pic32mx795_st7789_version1.2.X | 1 | 0 | ✅ |
+| pic32mx795_st7789_version1.3.X | 3 | 5 | ✅ |
+| pic32mx795_st7789_version1.4.X | 4 | 5 | ✅ |
+| pic32mx795_st7789_version1.5.X | 4 | 5 | ✅ |
+| pic32mx795_test_epaper_pins.X | 1 | 0 | ✅ |
