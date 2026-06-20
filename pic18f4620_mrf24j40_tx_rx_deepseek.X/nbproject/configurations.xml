@@ -4,11 +4,11 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>inc/config.h</itemPath>
-      <itemPath>inc/mrf24j40.h</itemPath>
-      <itemPath>inc/oled.h</itemPath>
-      <itemPath>inc/spi.h</itemPath>
-      <itemPath>inc/usart.h</itemPath>
+      <itemPath>inc/inc/config.h</itemPath>
+      <itemPath>inc/inc/mrf24j40.h</itemPath>
+      <itemPath>inc/inc/oled.h</itemPath>
+      <itemPath>inc/inc/spi.h</itemPath>
+      <itemPath>inc/inc/usart.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -22,11 +22,11 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>src/main.c</itemPath>
-      <itemPath>src/mrf24j40.c</itemPath>
-      <itemPath>src/oled.c</itemPath>
-      <itemPath>src/spi.c</itemPath>
-      <itemPath>src/usart.c</itemPath>
+      <itemPath>src/src/main.c</itemPath>
+      <itemPath>src/src/mrf24j40.c</itemPath>
+      <itemPath>src/src/oled.c</itemPath>
+      <itemPath>src/src/spi.c</itemPath>
+      <itemPath>src/src/usart.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
