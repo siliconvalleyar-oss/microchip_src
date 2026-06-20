@@ -4,13 +4,13 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>inc/inc/inc/boards.h</itemPath>
-      <itemPath>inc/inc/inc/epaper.h</itemPath>
-      <itemPath>inc/inc/inc/epaper_display.h</itemPath>
-      <itemPath>inc/inc/inc/fonts_manager.h</itemPath>
-      <itemPath>inc/inc/inc/fonts.h</itemPath>
-      <itemPath>inc/inc/inc/epaper_refresh.h</itemPath>
-      <itemPath>inc/inc/inc/custom_image_example.h</itemPath>
+      <itemPath>inc/boards.h</itemPath>
+      <itemPath>inc/epaper.h</itemPath>
+      <itemPath>inc/epaper_display.h</itemPath>
+      <itemPath>inc/fonts_manager.h</itemPath>
+      <itemPath>inc/fonts.h</itemPath>
+      <itemPath>inc/epaper_refresh.h</itemPath>
+      <itemPath>inc/custom_image_example.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -24,12 +24,12 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>src/src/src/epaper.c</itemPath>
-      <itemPath>src/src/src/epaper_display.c</itemPath>
-      <itemPath>src/src/src/fonts_manager.c</itemPath>
-      <itemPath>src/src/src/main.c</itemPath>
-      <itemPath>src/src/src/fonts.cpp</itemPath>
-      <itemPath>src/src/src/epaper_refresh.c</itemPath>
+      <itemPath>src/epaper.c</itemPath>
+      <itemPath>src/epaper_display.c</itemPath>
+      <itemPath>src/fonts_manager.c</itemPath>
+      <itemPath>src/main.c</itemPath>
+      <itemPath>src/fonts.cpp</itemPath>
+      <itemPath>src/epaper_refresh.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
