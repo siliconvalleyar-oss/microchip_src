@@ -42,3 +42,6 @@ nbproject/private/
 # Editor
 .vscode/
 .idea/
+
+# Temporary documentation folder
+tmp/
