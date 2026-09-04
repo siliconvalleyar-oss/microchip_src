@@ -30,7 +30,8 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>src/main.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
+      <itemPath>../ST7789_common/st7789_driver.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
