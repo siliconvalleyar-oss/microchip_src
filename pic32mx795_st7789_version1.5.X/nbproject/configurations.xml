@@ -4,30 +4,31 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>inc/GameEngine.h</itemPath>
-      <itemPath>inc/Graphics.h</itemPath>
-      <itemPath>inc/HardwareProfile.h</itemPath>
-      <itemPath>inc/Sound.h</itemPath>
-      <itemPath>inc/fonts.h</itemPath>
-    </logicalFolder>
+      <itemPath>GameEngine.h</itemPath>
+      <itemPath>Graphics.h</itemPath>
+      <itemPath>HardwareProfile.h</itemPath>
+      <itemPath>Sound.h</itemPath>
+      <itemPath>fonts.h</itemPath>
+    
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="true">
       <itemPath>Makefile</itemPath>
-    </logicalFolder>
+    
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
-    </logicalFolder>
+    
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>src/GameEngine.cpp</itemPath>
-      <itemPath>src/Graphics.cpp</itemPath>
-      <itemPath>src/Sound.cpp</itemPath>
-      <itemPath>src/main.cpp</itemPath>
-    </logicalFolder>
-  </logicalFolder>
+      <itemPath>GameEngine.cpp</itemPath>
+      <itemPath>Graphics.cpp</itemPath>
+      <itemPath>Sound.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
+      <itemPath>../ST7789_common/st7789_driver.c</itemPath>
+    
+  
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="default" type="2">
