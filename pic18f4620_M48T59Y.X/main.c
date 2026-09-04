@@ -1,11 +1,20 @@
 // PIC18F4620 - Regenerador de señal con frecuencia variable en RB3 (pulsador RA5)
-// Comparador C1: RA2=señal(3V max) vs RA3=Vref(2.5V) ? salida RA4
+// Comparador C1: RA2=señal(3V max) vs RA3=Vref(2.5V) -> salida RA4
 // RA4 conectado fisicamente con cable corto a RC1
 // RC2 (CCP1) = señal replicada en 5V, misma frecuencia
 // RB3 = frecuencia ajustable por pulsador (2.3kHz a 4kHz, paso 150Hz)
 // RB5 = LED (ON = señal presente)
+//
+// M48T559Y Timekeeper SRAM (interfaz multiplexada):
+//   AD0-AD7 -> PORTD (RD0-RD7)
+//   AS0      -> RA6
+//   AS1      -> RA7
+//   E        -> RC0
+//   R        -> RC3
+//   W        -> RC4
 
 #include <xc.h>
+#include "m48t59y.h"
 #pragma config OSC = HS, WDT = OFF, LVP = OFF, DEBUG = OFF
 #define _XTAL_FREQ 20000000
 
@@ -123,6 +132,27 @@ void main(void)
     LATBbits.LATB3  = 0;
     LATCbits.LATC2  = 0;
 
+    // Inicializar M48T559Y (databus PORTD, AS0=RA6, AS1=RA7, E=RC0, R=RC3, W=RC4)
+    m48txx_init();
+
+    // Cargar frecuencia guardada en SRAM del M48T559Y (addr 0x0000 + magic)
+    {
+        uint16_t addr = 0x0000;
+        uint8_t magic = m48txx_read_sram(addr);
+        uint8_t freq_h = m48txx_read_sram(addr + 1);
+        uint8_t freq_l = m48txx_read_sram(addr + 2);
+        if (magic == 0xA5) {
+            current_rb3_freq = ((uint16_t)freq_h << 8) | freq_l;
+            if (current_rb3_freq < 2300 || current_rb3_freq > 4000)
+                current_rb3_freq = 2300;
+        } else {
+            current_rb3_freq = 2300;
+        }
+        set_rb3_freq(current_rb3_freq);
+        TMR0H = rb3_reload_h;
+        TMR0L = rb3_reload_l;
+    }
+
     // Comparador C1
     CMCON = 0x02;    // Comparador independiente, C1OUT en RA4
 
@@ -138,10 +168,6 @@ void main(void)
 
     // Timer0: 16-bit, Fosc/4, prescaler 1:1, inicialmente apagado para cargar
     T0CON = 0x88;    // 16-bit, reloj interno, prescaler 1:1, aún sin arrancar
-    // Cargar valores para 2.3 kHz (valor por defecto)
-    set_rb3_freq(2300);
-    TMR0H = rb3_reload_h;
-    TMR0L = rb3_reload_l;
     T0CONbits.TMR0ON = 1;   // arrancar Timer0
 
     // Interrupciones
@@ -169,6 +195,13 @@ void main(void)
                     current_rb3_freq += 150;
                     if (current_rb3_freq > 4000)
                         current_rb3_freq = 2300;
+                    // Guardar en SRAM del M48T559Y
+                    {
+                        uint16_t addr = 0x0000;
+                        m48txx_write_sram(addr,     0xA5);
+                        m48txx_write_sram(addr + 1, (uint8_t)(current_rb3_freq >> 8));
+                        m48txx_write_sram(addr + 2, (uint8_t)(current_rb3_freq & 0xFF));
+                    }
                     // Actualizar registros de Timer0
                     INTCONbits.GIE = 0;
                     set_rb3_freq(current_rb3_freq);
