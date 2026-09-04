@@ -4,15 +4,16 @@
 #include "HardwareProfile.h"
 
 namespace Graphics {
-    // Primitivas base (envueltas desde st7789_driver)
-    inline void fill_screen(uint16_t c) { ::fill_screen(c); }
-    inline void draw_pixel(int16_t x, int16_t y, uint16_t c) { ::draw_pixel(x, y, c); }
-    inline void fill_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t c) { ::fill_rect(x, y, w, h, c); }
-    inline void draw_hline(int16_t x, int16_t y, int16_t l, uint16_t c) { ::draw_hline(x, y, l, c); }
-    inline void draw_vline(int16_t x, int16_t y, int16_t l, uint16_t c) { ::draw_vline(x, y, l, c); }
-    inline void draw_circle(int16_t cx, int16_t cy, int16_t r, uint16_t c) { ::draw_circle(cx, cy, r, c); }
-    inline void draw_char(int16_t x, int16_t y, char c, uint16_t fg, uint16_t bg, uint8_t s) { ::draw_char(x, y, c, fg, bg, s); }
-    inline void draw_string(int16_t x, int16_t y, const char *s, uint16_t fg, uint16_t bg, uint8_t scale) { ::draw_string(x, y, s, fg, bg, scale); }
+    // Primitivas base (implementadas en Graphics.cpp)
+    void fill_screen(uint16_t c);
+    void draw_pixel(int16_t x, int16_t y, uint16_t c);
+    void fill_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t c);
+    void draw_hline(int16_t x, int16_t y, int16_t l, uint16_t c);
+    void draw_vline(int16_t x, int16_t y, int16_t l, uint16_t c);
+    void draw_circle(int16_t cx, int16_t cy, int16_t r, uint16_t c);
+    void fill_circle(int16_t cx, int16_t cy, int16_t r, uint16_t c);
+    void draw_char(int16_t x, int16_t y, char c, uint16_t fg, uint16_t bg, uint8_t s);
+    void draw_string(int16_t x, int16_t y, const char *s, uint16_t fg, uint16_t bg, uint8_t scale);
 
     // ---- Sprites de juego ----
     void draw_pacman(int16_t x, int16_t y, bool mouth_open, uint8_t dir);

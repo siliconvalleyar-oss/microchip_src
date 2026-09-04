@@ -531,8 +531,43 @@ restart_game:
     Graphics::draw_string((TFT_W - 140)/2, HUD_Y - 15, "READY?", YELLOW, BLACK, 1);
     delay_ms(300);  // REDUCIDO de 800ms a 300ms
     Graphics::fill_rect(0, HUD_Y - 20, TFT_W, 20, BLACK);
-    
-    // Resto del código...
+
+    // ============================================================
+    //  BUCLE DE JUEGO (1 frame por iteraci\xf3n)
+    // ============================================================
+    while(1) {
+        // Comprobar si el nivel est\xe1 completo (no quedan puntos ni power pellets)
+        bool levelCleared = true;
+        for(uint8_t cx = 0; cx < MAZE_W; cx++) {
+            for(uint8_t cy = 0; cy < MAZE_H; cy++) {
+                if(maze[cx][cy] == 2 || maze[cx][cy] == 3) levelCleared = false;
+            }
+        }
+        if(levelCleared) {
+            show_level_clear_enhanced();   // animaci\xf3n y level++
+            init_game();                   // reinicia el laberinto (restaura puntos)
+            draw_maze();
+            draw_status();
+            Graphics::draw_pacman(pacX, pacY, true, pacDir);
+            for(int i = 0; i < 4; i++)
+                Graphics::draw_ghost(ghostX[i], ghostY[i], GHOST_COLORS[i], false);
+            Graphics::draw_string((TFT_W - 140)/2, HUD_Y - 15, "READY?", YELLOW, BLACK, 1);
+            delay_ms(300);
+            Graphics::fill_rect(0, HUD_Y - 20, TFT_W, 20, BLACK);
+            continue;
+        }
+
+        if(gameOver) {
+            show_game_over_professional();
+            goto restart_game;             // reinicia la partida (mantiene highScore de sesi\xf3n)
+        }
+
+        update_pacman();
+        update_ghosts();
+        check_collisions();
+
+        delay_ms(16);                      // tasa de frames (~60 FPS)
+    }
 }
 
 } // namespace GameEngine
