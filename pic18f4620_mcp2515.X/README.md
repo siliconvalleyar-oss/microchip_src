@@ -1,30 +1,53 @@
-# PIC18F4620 - MAF Signal Regenerator
+# PIC18F4620 + MCP2515 - Lector OBD-II CAN
 
-**Descripción:** Regenerador de señal con frecuencia ajustable. Usa comparador C1 para convertir señal analógica a cuadrada, captura el periodo con CCP2 y replica la frecuencia en RC2 con CCP1 toggle. Incluye salida de frecuencia variable en RB3 controlada por pulsador.
+**Descripción:** Lector de parámetros OBD-II mediante bus CAN usando PIC18F4620 y controlador MCP2515. Lee RPM, velocidad, temperatura del motor, carga y posición del acelerador desde la ECU del vehículo.
 
 ## Características
-- Captura de periodo con CCP2 en RC1
-- Replicación de frecuencia en RC2 (CCP1 toggle, 100Hz-20kHz)
-- Frecuencia variable en RB3: 2.3kHz-4kHz, paso 150Hz
-- Pulsador RA5 para cambiar frecuencia RB3
-- LED RB5 indica señal presente
-- Timeout 500ms para pérdida de señal
+- Protocolo CAN 2.0B (11 bits) a 500 kbps
+- MCP2515 controlador CAN via SPI
+- OBD-II PIDs: RPM, velocidad, temperatura, carga motor, acelerador
+- Salida por UART 9600 baudios
+- Polling de mensajes CAN
 - Fosc = 20MHz
 
 ## Periféricos Utilizados
-- CCP1 (compare/toggle), CCP2 (capture)
-- Timer0, Timer1
-- Comparador C1
+- SPI (MSSP)
+- UART (EUSART)
 - GPIO
+- MCP2515 CAN Controller
 
 ## Pines
 | Pin | Función |
 |-----|---------|
-| RA2 | C1IN+ (señal entrada) |
-| RA3 | C1IN- (ref 2.5V) |
-| RA4 | C1OUT |
-| RA5 | Pulsador (activo bajo) |
-| RC1 | CCP2 capture |
-| RC2 | CCP1 señal replicada |
-| RB3 | Frecuencia variable |
-| RB5 | LED indicador |
+| RC3 | SCK (SPI clock) |
+| RC4 | SDI (SPI data input) |
+| RC5 | SDO (SPI data output) |
+| RA0 | CS (Chip Select, active low) |
+| RC6 | TX (UART) |
+| RC7 | RX (UART) |
+
+## Archivos
+| Archivo | Descripción |
+|---------|-------------|
+| `main.c` | Aplicación principal OBD-II |
+| `mcp2515.c` | Driver MCP2515 |
+| `mcp2515.h` | API pública del driver |
+| `docs/SKILL.md` | Documentación técnica |
+
+## Uso
+1. Conectar MCP2515 al PIC18F4620 via SPI
+2. Conectar CANH/CANL al conector OBD-II (pines 6 y 14)
+3. Conectar UART a PC via USB-TTL
+4. Compilar y grabar
+5. Abrir terminal serie a 9600 baudios
+
+## Protocolo OBD-II
+- ID request: 0x7DF (broadcast)
+- ID response: 0x7E8 (ECU #1)
+- Modo 01: Datos en tiempo real
+- PIDs soportados:
+  - 0x0C: RPM motor
+  - 0x0D: Velocidad vehículo
+  - 0x05: Temperatura refrigerante
+  - 0x04: Carga motor
+  - 0x11: Posición acelerador
