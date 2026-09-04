@@ -45,10 +45,8 @@ void set_rb3_freq(unsigned int freq_hz) {
     if (freq_hz < 100) freq_hz = 100;
     if (freq_hz > 10000) freq_hz = 10000;
     // ticks = (Fosc/4) / (2 * freq) = 5e6 / (2*freq) = 2.5e6 / freq
-    unsigned int ticks = 2500000UL / freq_hz;
-    if (ticks < 1) ticks = 1;
-    if (ticks > 65535) ticks = 65535;
-    unsigned int reload = 65536 - ticks;
+    unsigned int ticks = (unsigned int)(2500000UL / (unsigned long)freq_hz);
+    unsigned int reload = (unsigned int)(65536UL - ticks);
     rb3_reload_h = (reload >> 8) & 0xFF;
     rb3_reload_l = reload & 0xFF;
 }
@@ -99,9 +97,9 @@ void __interrupt() isr(void)
 
 void set_frecuencia_salida(unsigned int freq_hz)
 {
-    if (freq_hz < 100 || freq_hz > 20000) return;
+    if (freq_hz < 100U || freq_hz > 20000U) return;
     unsigned int hp = (unsigned int)(2500000UL / (unsigned long)freq_hz);
-    if (hp < 1) hp = 1;
+    if (hp < 1U) hp = 1;
 
     INTCONbits.GIE = 0;
     half_period = hp;
