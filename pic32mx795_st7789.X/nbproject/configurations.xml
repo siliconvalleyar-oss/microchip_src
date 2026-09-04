@@ -8,17 +8,17 @@
       <itemPath>Graphics.h</itemPath>
       <itemPath>HardwareProfile.h</itemPath>
       <itemPath>Sound.h</itemPath>
-      <itemPath>fonts.h</itemPath>
-    
+      <itemPath>ST7789_common/st7789_driver.h</itemPath>
+    </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="true">
       <itemPath>Makefile</itemPath>
-    
+    </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
-    
+    </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
@@ -26,9 +26,12 @@
       <itemPath>Graphics.cpp</itemPath>
       <itemPath>Sound.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
-      <itemPath>../ST7789_common/st7789_driver.c</itemPath>
-    
-  
+      <itemPath>ST7789_common/st7789_driver.c</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>ST7789_common</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="default" type="2">
@@ -37,13 +40,13 @@
         <targetDevice>PIC32MX795F512H</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>PK5Tool</platformTool>
+        <platformTool>noID</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>5.00</languageToolchainVersion>
         <platform>2</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.6.369"/>
+        <pack name="PIC32MX_DFP" vendor="Microchip" version="1.7.380"/>
       </packs>
       <ScriptingSettings>
       </ScriptingSettings>

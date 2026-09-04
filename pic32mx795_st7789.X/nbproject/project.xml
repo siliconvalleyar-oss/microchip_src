@@ -3,12 +3,14 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>pic32mx795_st7789_version1.5</name>
-            <creation-uuid>2e853d19-5dc3-478a-8124-f92a76658e18</creation-uuid>
+            <name>pic32mx795_st7789</name>
+            <creation-uuid>d4211626-2495-480c-9a21-76f34cb232b7</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
-            <sourceRootList/>
+            <sourceRootList>
+                <sourceRootElem>ST7789_common</sourceRootElem>
+            </sourceRootList>
             <confList>
                 <confElem>
                     <name>default</name>

@@ -1,7 +1,7 @@
 #ifndef HARDWARE_PROFILE_H
 #define HARDWARE_PROFILE_H
 
-#include "../../ST7789_common/st7789_driver.h"
+#include "ST7789_common/st7789_driver.h"
 
 // ==================== PINES DE BOTONES ====================
 // #define USE_BUTTONS
