@@ -1,29 +1,17 @@
 // PIC18F4620 - Regenerador de señal con frecuencia variable en RB3 (pulsador RA5)
-// Comparador C1: RA2=señal(3V max) vs RA3=Vref(2.5V) -> salida RA4
+// Comparador C1: RA2=señal(3V max) vs RA3=Vref(2.5V) ? salida RA4
 // RA4 conectado fisicamente con cable corto a RC1
 // RC2 (CCP1) = señal replicada en 5V, misma frecuencia
 // RB3 = frecuencia ajustable por pulsador (2.3kHz a 4kHz, paso 150Hz)
 // RB5 = LED (ON = señal presente)
-//
-// M48T559Y Timekeeper SRAM (interfaz multiplexada):
-//   AD0-AD7 -> PORTD (RD0-RD7)
-//   AS0      -> RA6
-//   AS1      -> RA7
-//   E        -> RC0
-//   R        -> RC3
-//   W        -> RC4
-//
-// RTC: Se inicializa automaticamente y se puede leer la fecha/hora
-//      usando m48txx_get_datetime() / m48txx_set_datetime()
 
 #include <xc.h>
-#include "m48t59y.h"
 #pragma config OSC = HS, WDT = OFF, LVP = OFF, DEBUG = OFF
 #define _XTAL_FREQ 20000000
 
-// Timer1 free-running a 5MHz (Fosc/4, prescaler 1:1) -> tick = 0.2 µs
+// Timer1 free-running a 5MHz (Fosc/4, prescaler 1:1) ? tick = 0.2 µs
 // CCP1 Compare/Toggle: toggle en RC2 cada half_period ticks
-// freq = 5.000.000 / (2 × half_period)  ->  half_period = 2.500.000 / freq
+// freq = 5.000.000 / (2 × half_period)  ?  half_period = 2.500.000 / freq
 
 volatile unsigned int  period_ticks = 0;
 volatile unsigned char new_period   = 0;
@@ -33,12 +21,9 @@ volatile unsigned char toggle_rb3   = 0;
 volatile unsigned int  half_period  = 2500;  // default 1 kHz (para CCP1)
 
 // Variables para la frecuencia variable de RB3 (Timer0)
-volatile unsigned char rb3_reload_h = 0xFB;   // 2.3 kHz inicial: 64450 -> 0xFBC2
+volatile unsigned char rb3_reload_h = 0xFB;   // 2.3 kHz inicial: 64450 ? 0xFBC2
 volatile unsigned char rb3_reload_l = 0xC2;
 unsigned int current_rb3_freq = 2300;         // arranca en 2.3 kHz
-
-// Variables para RTC
-TK_DateTime current_time;
 
 // Calcula los registros de recarga de Timer0 para una frecuencia dada en Hz
 void set_rb3_freq(unsigned int freq_hz) {
@@ -55,7 +40,7 @@ void set_rb3_freq(unsigned int freq_hz) {
 
 void __interrupt() isr(void)
 {
-    // CCP1: Compare/Toggle - actualizar CCPR1 para el próximo medio ciclo
+    // ?? CCP1: Compare/Toggle - actualizar CCPR1 para el próximo medio ciclo
     if (PIR1bits.CCP1IF)
     {
         unsigned int next = ((unsigned int)CCPR1H << 8) | CCPR1L;
@@ -65,7 +50,7 @@ void __interrupt() isr(void)
         PIR1bits.CCP1IF = 0;
     }
 
-    // CCP2: captura periodo de la señal en RC1
+    // ?? CCP2: captura periodo de la señal en RC1
     if (PIR2bits.CCP2IF)
     {
         static unsigned int prev = 0;
@@ -83,7 +68,7 @@ void __interrupt() isr(void)
         PIR2bits.CCP2IF = 0;
     }
 
-    // Timer0: genera frecuencia variable en RB3 + timeout 500 ms
+    // ?? Timer0: genera frecuencia variable en RB3 + timeout 500 ms
     if (INTCONbits.TMR0IF)
     {
         // Recarga con los valores calculados según la frecuencia deseada
@@ -128,44 +113,15 @@ void main(void)
 
     TRISAbits.TRISA2 = 1;   // RA2 = C1IN+ (señal generador)
     TRISAbits.TRISA3 = 1;   // RA3 = C1IN- (2.5V)
-    TRISAbits.TRISA4 = 0;   // RA4 = C1OUT (salida comparador -> RC1)
+    TRISAbits.TRISA4 = 0;   // RA4 = C1OUT (salida comparador ? RC1)
     TRISAbits.TRISA5 = 1;   // RA5 = pulsador (activo a nivel bajo)
-    TRISAbits.TRISA6 = 0;   // RA6 = AS0 (M48T559Y)
-    TRISAbits.TRISA7 = 0;   // RA7 = AS1 (M48T559Y)
-    TRISCbits.TRISC0 = 0;   // RC0 = E (M48T559Y)
     TRISCbits.TRISC1 = 1;   // RC1 = entrada CCP2
     TRISCbits.TRISC2 = 0;   // RC2 = salida CCP1 (señal replicada 5V)
-    TRISCbits.TRISC3 = 0;   // RC3 = R (M48T559Y)
-    TRISCbits.TRISC4 = 0;   // RC4 = W (M48T559Y)
     TRISBbits.TRISB3 = 0;   // RB3 = salida de frecuencia variable
     TRISBbits.TRISB5 = 0;   // RB5 = LED
 
     LATBbits.LATB3  = 0;
     LATCbits.LATC2  = 0;
-
-    // Inicializar M48T559Y (databus PORTD, AS0=RA6, AS1=RA7, E=RC0, R=RC3, W=RC4)
-    m48txx_init();
-
-    // Iniciar RTC (detenido por defecto en fabrica)
-    m48txx_rtc_start();
-
-    // Cargar frecuencia guardada en SRAM del M48T559Y (addr 0x0000 + magic)
-    {
-        uint16_t addr = 0x0000;
-        uint8_t magic = m48txx_read_sram(addr);
-        uint8_t freq_h = m48txx_read_sram(addr + 1);
-        uint8_t freq_l = m48txx_read_sram(addr + 2);
-        if (magic == 0xA5) {
-            current_rb3_freq = ((uint16_t)freq_h << 8) | freq_l;
-            if (current_rb3_freq < 2300 || current_rb3_freq > 4000)
-                current_rb3_freq = 2300;
-        } else {
-            current_rb3_freq = 2300;
-        }
-        set_rb3_freq(current_rb3_freq);
-        TMR0H = rb3_reload_h;
-        TMR0L = rb3_reload_l;
-    }
 
     // Comparador C1
     CMCON = 0x02;    // Comparador independiente, C1OUT en RA4
@@ -182,6 +138,10 @@ void main(void)
 
     // Timer0: 16-bit, Fosc/4, prescaler 1:1, inicialmente apagado para cargar
     T0CON = 0x88;    // 16-bit, reloj interno, prescaler 1:1, aún sin arrancar
+    // Cargar valores para 2.3 kHz (valor por defecto)
+    set_rb3_freq(2300);
+    TMR0H = rb3_reload_h;
+    TMR0L = rb3_reload_l;
     T0CONbits.TMR0ON = 1;   // arrancar Timer0
 
     // Interrupciones
@@ -198,9 +158,6 @@ void main(void)
     unsigned char button_pressed = 0;
     unsigned char debounce = 0;
 
-    // Leer hora actual del RTC una vez al inicio
-    m48txx_get_datetime(&current_time);
-
     while (1)
     {
         // Detectar y procesar el pulsador RA5
@@ -212,13 +169,6 @@ void main(void)
                     current_rb3_freq += 150;
                     if (current_rb3_freq > 4000)
                         current_rb3_freq = 2300;
-                    // Guardar en SRAM del M48T559Y
-                    {
-                        uint16_t addr = 0x0000;
-                        m48txx_write_sram(addr,     0xA5);
-                        m48txx_write_sram(addr + 1, (uint8_t)(current_rb3_freq >> 8));
-                        m48txx_write_sram(addr + 2, (uint8_t)(current_rb3_freq & 0xFF));
-                    }
                     // Actualizar registros de Timer0
                     INTCONbits.GIE = 0;
                     set_rb3_freq(current_rb3_freq);
@@ -230,10 +180,6 @@ void main(void)
         } else {
             debounce = 0;   // reset al soltar
         }
-
-        // Leer RTC (opcional, para debugging o display)
-        // m48txx_get_datetime(&current_time);
-        // current_time.hours, .minutes, .seconds, .date, .month, .year
 
         // Procesar captura de periodo de la señal externa
         if (new_period)
