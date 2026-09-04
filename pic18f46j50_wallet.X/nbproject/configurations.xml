@@ -5,17 +5,30 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="hal" displayName="hal" projectFiles="true">
-        <itemPath>inc/hal/FSconfig.h</itemPath>
-        <itemPath>inc/hal/hal_button.h</itemPath>
-        <itemPath>inc/hal/hal_config.h</itemPath>
-        <itemPath>inc/hal/hal_i2c.h</itemPath>
-        <itemPath>inc/hal/hal_led.h</itemPath>
-        <itemPath>inc/hal/spi_sd.h</itemPath>
-        <itemPath>inc/hal/ssd1306.h</itemPath>
+        <itemPath>hal/FSconfig.h</itemPath>
+        <itemPath>hal/hal_button.h</itemPath>
+        <itemPath>hal/hal_config.h</itemPath>
+        <itemPath>hal/hal_i2c.h</itemPath>
+        <itemPath>hal/hal_led.h</itemPath>
+        <itemPath>hal/spi_sd.h</itemPath>
+        <itemPath>hal/ssd1306.h</itemPath>
       </logicalFolder>
       <logicalFolder name="usb" displayName="usb" projectFiles="true">
-        <itemPath>inc/usb/usb_cdc.h</itemPath>
+        <itemPath>usb/usb_cdc.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="usb_mla" displayName="usb_mla" projectFiles="true">
+        <logicalFolder name="inc" displayName="inc" projectFiles="true">
+          <itemPath>usb_mla/inc/usb_device.h</itemPath>
+          <itemPath>usb_mla/inc/usb_device_cdc_config.h</itemPath>
+          <itemPath>usb_mla/inc/usb_device_config.h</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+      <itemPath>usb_pic18f46j50_compat.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="true">
+      <itemPath>Makefile</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -24,23 +37,20 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>src/hal_button.c</itemPath>
-      <itemPath>src/hal_i2c.c</itemPath>
-      <itemPath>src/hal_led.c</itemPath>
-      <itemPath>src/main.c</itemPath>
-      <itemPath>src/spi_sd.c</itemPath>
-      <itemPath>src/ssd1306.c</itemPath>
-      <itemPath>src/usb_cdc.c</itemPath>
-    </logicalFolder>
-    <logicalFolder name="ExternalFiles"
-                   displayName="Important Files"
-                   projectFiles="false">
-      <itemPath>Makefile</itemPath>
+      <logicalFolder name="src" displayName="src" projectFiles="true">
+        <itemPath>usb_mla/src/usb_device.c</itemPath>
+      </logicalFolder>
+      <itemPath>hal_button.c</itemPath>
+      <itemPath>hal_i2c.c</itemPath>
+      <itemPath>hal_led.c</itemPath>
+      <itemPath>main.c</itemPath>
+      <itemPath>spi_sd.c</itemPath>
+      <itemPath>ssd1306.c</itemPath>
+      <itemPath>usb_cdc.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>hal</Elem>
-    <Elem>usb</Elem>
+    <Elem>.</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -50,13 +60,13 @@
         <targetDevice>PIC18F46J50</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool>PK5Tool</platformTool>
         <languageToolchain>XC8</languageToolchain>
         <languageToolchainVersion>3.10</languageToolchainVersion>
         <platform>2</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-J_DFP" vendor="Microchip" version="1.6.157"/>
+        <pack name="PIC18F-J_DFP" vendor="Microchip" version="1.9.170"/>
       </packs>
       <ScriptingSettings>
       </ScriptingSettings>
@@ -121,23 +131,33 @@
       </HI-TECH-COMP>
       <HI-TECH-LINK>
         <property key="additional-options-checksum" value=""/>
+        <property key="additional-options-checksumAVR" value=""/>
+        <property key="additional-options-checksumAVR2" value="0"/>
         <property key="additional-options-code-offset" value=""/>
         <property key="additional-options-command-line" value=""/>
         <property key="additional-options-errata" value=""/>
         <property key="additional-options-extend-address" value="false"/>
+        <property key="additional-options-fillAVR2" value="0"/>
         <property key="additional-options-trace-type" value=""/>
         <property key="additional-options-use-response-files" value="false"/>
         <property key="backup-reset-condition-flags" value="false"/>
         <property key="calibrate-oscillator" value="false"/>
         <property key="calibrate-oscillator-value" value="0x3400"/>
+        <property key="checksum-flash-options-addressce" value=""/>
+        <property key="checksum-flash-options-addresscs" value=""/>
+        <property key="checksum-flash-options-algorithmc"
+                  value="Select checksum algorithm"/>
+        <property key="checksum-flash-options-destc" value=""/>
+        <property key="checksum-flash-options-offsetc" value="0xFFFF"/>
+        <property key="checksum-flash-options-widthc" value="2"/>
         <property key="clear-bss" value="true"/>
         <property key="code-model-external" value="wordwrite"/>
         <property key="code-model-rom" value=""/>
         <property key="create-html-files" value="false"/>
         <property key="data-model-ram" value=""/>
-        <property key="data-model-size-of-double" value="32"/>
+        <property key="data-model-size-of-double" value="24"/>
         <property key="data-model-size-of-double-gcc" value="no-short-double"/>
-        <property key="data-model-size-of-float" value="32"/>
+        <property key="data-model-size-of-float" value="24"/>
         <property key="data-model-size-of-float-gcc" value="no-short-float"/>
         <property key="display-class-usage" value="false"/>
         <property key="display-hex-usage" value="false"/>
@@ -145,12 +165,16 @@
         <property key="display-psect-usage" value="false"/>
         <property key="extra-lib-directories" value=""/>
         <property key="fill-flash-options-addr" value=""/>
+        <property key="fill-flash-options-addrfe" value=""/>
+        <property key="fill-flash-options-addrfs" value=""/>
         <property key="fill-flash-options-const" value=""/>
+        <property key="fill-flash-options-constf" value=""/>
         <property key="fill-flash-options-how" value="0"/>
         <property key="fill-flash-options-inc-const" value="1"/>
         <property key="fill-flash-options-increment" value=""/>
         <property key="fill-flash-options-seq" value=""/>
         <property key="fill-flash-options-what" value="0"/>
+        <property key="fill-flash-options-wwidthf" value="2"/>
         <property key="format-hex-file-for-download" value="false"/>
         <property key="initialize-data" value="true"/>
         <property key="input-libraries" value="libm"/>
@@ -171,7 +195,7 @@
       </XC8-CO>
       <XC8-config-global>
         <property key="advanced-elf" value="true"/>
-        <property key="constdata-progmem" value="true"/>
+        <property key="constdata-progmem" value="false"/>
         <property key="gcc-opt-driver-new" value="true"/>
         <property key="gcc-opt-std" value="-std=c99"/>
         <property key="gcc-output-file-format" value="dwarf-3"/>

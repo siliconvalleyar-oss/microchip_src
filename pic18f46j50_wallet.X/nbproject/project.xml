@@ -4,13 +4,12 @@
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
             <name>pic18f46j50_wallet</name>
-            <creation-uuid>02a1a94f-af06-4719-ad62-38ecd647989a</creation-uuid>
+            <creation-uuid>d0c0313a-5aeb-4819-9663-2ebf71d9b6c8</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
-                <sourceRootElem>hal</sourceRootElem>
-                <sourceRootElem>usb</sourceRootElem>
+                <sourceRootElem>.</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
