@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>pic32mx795_Epaper_Display_1v0</name>
+            <name>pic32mx795_Epaper_Display</name>
             <creation-uuid>f3aca9c7-2334-47a5-8470-8692379bdf65</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
