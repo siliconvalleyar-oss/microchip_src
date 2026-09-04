@@ -6,13 +6,10 @@
  * PIC18F4620 @ 20MHz
  */
 
+#include "m48t59y.h"
 #include <xc.h>
 #include <stdint.h>
 #include <stdbool.h>
-
-void m48txx_init(void);
-uint8_t m48txx_read(uint16_t address);
-void m48txx_write(uint16_t address, uint8_t data);
 
 #define DATA_PORT    PORTD
 #define DATA_TRIS    TRISD
@@ -127,4 +124,82 @@ uint8_t m48txx_read(uint16_t address) {
 
 void m48txx_write(uint16_t address, uint8_t data) {
     write_cycle(address, data);
+}
+
+void m48txx_rtc_start(void) {
+    uint8_t sec = read_cycle(RTC_REG_SECONDS);
+    sec &= ~SECONDS_ST_BIT;
+    write_cycle(RTC_REG_SECONDS, sec);
+}
+
+void m48txx_rtc_stop(void) {
+    uint8_t sec = read_cycle(RTC_REG_SECONDS);
+    sec |= SECONDS_ST_BIT;
+    write_cycle(RTC_REG_SECONDS, sec);
+}
+
+void m48txx_rtc_set_time(uint8_t year, uint8_t month, uint8_t day,
+                          uint8_t hour, uint8_t minute, uint8_t second) {
+    m48txx_rtc_stop();
+    write_cycle(RTC_REG_YEAR,    year);
+    write_cycle(RTC_REG_MONTH,   month);
+    write_cycle(RTC_REG_DATE,    day);
+    write_cycle(RTC_REG_HOURS,   hour);
+    write_cycle(RTC_REG_MINUTES, minute);
+    write_cycle(RTC_REG_SECONDS, second);
+    m48txx_rtc_start();
+}
+
+void m48txx_rtc_get_time(uint8_t *year, uint8_t *month, uint8_t *day,
+                          uint8_t *hour, uint8_t *minute, uint8_t *second) {
+    *year   = read_cycle(RTC_REG_YEAR);
+    *month  = read_cycle(RTC_REG_MONTH);
+    *day    = read_cycle(RTC_REG_DATE);
+    *hour   = read_cycle(RTC_REG_HOURS);
+    *minute = read_cycle(RTC_REG_MINUTES);
+    *second = read_cycle(RTC_REG_SECONDS);
+}
+
+void m48txx_get_datetime(TK_DateTime *dt) {
+    uint8_t ctrl;
+
+    ctrl = m48txx_read(RTC_REG_CONTROL);
+    m48txx_write(RTC_REG_CONTROL, (uint8_t)(ctrl | CTRL_R_BIT));
+
+    dt->seconds = bcd_to_bin(m48txx_read(RTC_REG_SECONDS) & 0x7F);
+    dt->minutes = bcd_to_bin(m48txx_read(RTC_REG_MINUTES) & 0x7F);
+    dt->hours   = bcd_to_bin(m48txx_read(RTC_REG_HOURS)   & 0x3F);
+    dt->day     = bcd_to_bin(m48txx_read(RTC_REG_DAY)     & 0x07);
+    dt->date    = bcd_to_bin(m48txx_read(RTC_REG_DATE)    & 0x3F);
+    dt->month   = bcd_to_bin(m48txx_read(RTC_REG_MONTH)   & 0x1F);
+    dt->year    = bcd_to_bin(m48txx_read(RTC_REG_YEAR));
+
+    ctrl = m48txx_read(RTC_REG_CONTROL);
+    m48txx_write(RTC_REG_CONTROL, (uint8_t)(ctrl & (uint8_t)~CTRL_R_BIT));
+}
+
+void m48txx_set_datetime(const TK_DateTime *dt) {
+    uint8_t ctrl;
+
+    ctrl = m48txx_read(RTC_REG_CONTROL);
+    m48txx_write(RTC_REG_CONTROL, (uint8_t)(ctrl | CTRL_W_BIT));
+
+    m48txx_write(RTC_REG_SECONDS, bin_to_bcd(dt->seconds));
+    m48txx_write(RTC_REG_MINUTES, bin_to_bcd(dt->minutes));
+    m48txx_write(RTC_REG_HOURS,   bin_to_bcd(dt->hours));
+    m48txx_write(RTC_REG_DAY,     bin_to_bcd(dt->day));
+    m48txx_write(RTC_REG_DATE,    bin_to_bcd(dt->date));
+    m48txx_write(RTC_REG_MONTH,   bin_to_bcd(dt->month));
+    m48txx_write(RTC_REG_YEAR,    bin_to_bcd(dt->year));
+
+    ctrl = m48txx_read(RTC_REG_CONTROL);
+    m48txx_write(RTC_REG_CONTROL, (uint8_t)(ctrl & (uint8_t)~CTRL_W_BIT));
+}
+
+uint8_t bin_to_bcd(uint8_t bin) {
+    return (uint8_t)(((bin / 10) << 4) | (bin % 10));
+}
+
+uint8_t bcd_to_bin(uint8_t bcd) {
+    return (uint8_t)(((bcd >> 4) * 10) + (bcd & 0x0F));
 }
