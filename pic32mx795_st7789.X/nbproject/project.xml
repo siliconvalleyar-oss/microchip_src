@@ -3,8 +3,8 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>pic18f4620_MAF</name>
-            <creation-uuid>29151ea9-1854-445c-8579-6bba72be5429</creation-uuid>
+            <name>pic32mx795_st7789_version1.5</name>
+            <creation-uuid>2e853d19-5dc3-478a-8124-f92a76658e18</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
             <make-dep-projects/>
