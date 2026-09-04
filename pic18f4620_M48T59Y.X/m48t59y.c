@@ -4,6 +4,13 @@
  *
  * Interface: AD0-AD7 multiplexed, AS0, AS1, E, R, W
  * PIC18F4620 @ 20MHz
+ *
+ * Características:
+ *  - Acceso a SRAM 8KB no volátil
+ *  - RTC con formato BCD (año, mes, día, hora, minuto, segundo)
+ *  - Watchdog timer
+ *  - Alarmas
+ *  - Flags de estado (batería baja, watchdog, alarma)
  */
 
 #include "m48t59y.h"
@@ -44,14 +51,21 @@
 //  M48T559Y / M48T08 REGISTER MAP
 // ============================================================================
 
-#define RTC_REG_CONTROL    0x1FF8
-#define RTC_REG_SECONDS    0x1FF9
-#define RTC_REG_MINUTES    0x1FFA
-#define RTC_REG_HOURS      0x1FFB
-#define RTC_REG_DAY        0x1FFC
-#define RTC_REG_DATE       0x1FFD
-#define RTC_REG_MONTH      0x1FFE
-#define RTC_REG_YEAR       0x1FFF
+#define RTC_REG_FLAGS        0x1FF0
+#define RTC_REG_ALARM_SEC    0x1FF2
+#define RTC_REG_ALARM_MIN    0x1FF3
+#define RTC_REG_ALARM_HOUR   0x1FF4
+#define RTC_REG_ALARM_DATE   0x1FF5
+#define RTC_REG_INTERRUPT    0x1FF6
+#define RTC_REG_WATCHDOG     0x1FF7
+#define RTC_REG_CONTROL      0x1FF8
+#define RTC_REG_SECONDS      0x1FF9
+#define RTC_REG_MINUTES      0x1FFA
+#define RTC_REG_HOURS        0x1FFB
+#define RTC_REG_DAY          0x1FFC
+#define RTC_REG_DATE         0x1FFD
+#define RTC_REG_MONTH        0x1FFE
+#define RTC_REG_YEAR         0x1FFF
 
 #define RTC_CTRL_WRITE_BIT 0x80
 #define RTC_CTRL_READ_BIT  0x40
@@ -82,6 +96,7 @@ static void pulse_as0(void) {
     NOP(); NOP(); NOP();
     AS0_LAT = 1;
     NOP(); NOP(); NOP();
+    AS0_LAT = 0;
 }
 
 static void pulse_as1(void) {
@@ -89,6 +104,7 @@ static void pulse_as1(void) {
     NOP(); NOP(); NOP();
     AS1_LAT = 1;
     NOP(); NOP(); NOP();
+    AS1_LAT = 0;
 }
 
 static uint8_t read_cycle(uint16_t address) {
@@ -147,8 +163,8 @@ static void write_cycle(uint16_t address, uint8_t data) {
 
 void m48txx_init(void) {
     // Control pins as outputs, idle high (disabled)
-    AS0_TRIS = 0; AS0_LAT = 1;
-    AS1_TRIS = 0; AS1_LAT = 1;
+    AS0_TRIS = 0; AS0_LAT = 0;
+    AS1_TRIS = 0; AS1_LAT = 0;
     E_TRIS   = 0; E_LAT   = 1;
     R_TRIS   = 0; R_LAT   = 1;
     W_TRIS   = 0; W_LAT   = 1;
@@ -165,6 +181,10 @@ uint8_t m48txx_read(uint16_t address) {
 void m48txx_write(uint16_t address, uint8_t data) {
     write_cycle(address, data);
 }
+
+// ============================================================================
+//  RTC FUNCTIONS
+// ============================================================================
 
 void m48txx_rtc_start(void) {
     uint8_t sec = read_cycle(RTC_REG_SECONDS);
@@ -199,6 +219,54 @@ void m48txx_rtc_get_time(uint8_t *year, uint8_t *month, uint8_t *day,
     *minute = read_cycle(RTC_REG_MINUTES);
     *second = read_cycle(RTC_REG_SECONDS);
 }
+
+// ============================================================================
+//  HIGH-LEVEL DATETIME API (BCD conversion built-in)
+// ============================================================================
+
+void m48txx_get_datetime(TK_DateTime *dt) {
+    uint8_t ctrl;
+
+    // Congelar actualizacion de los registros (bit READ = 1)
+    ctrl = m48txx_read(RTC_REG_CONTROL);
+    m48txx_write(RTC_REG_CONTROL, ctrl | CTRL_R_BIT);
+
+    dt->seconds = bcd_to_bin(m48txx_read(RTC_REG_SECONDS) & 0x7F);
+    dt->minutes = bcd_to_bin(m48txx_read(RTC_REG_MINUTES) & 0x7F);
+    dt->hours   = bcd_to_bin(m48txx_read(RTC_REG_HOURS)   & 0x3F);
+    dt->day     = bcd_to_bin(m48txx_read(RTC_REG_DAY)     & 0x07);
+    dt->date    = bcd_to_bin(m48txx_read(RTC_REG_DATE)    & 0x3F);
+    dt->month   = bcd_to_bin(m48txx_read(RTC_REG_MONTH)   & 0x1F);
+    dt->year    = bcd_to_bin(m48txx_read(RTC_REG_YEAR));
+
+    // Liberar el bit READ para que el reloj vuelva a actualizar
+    ctrl = m48txx_read(RTC_REG_CONTROL);
+    m48txx_write(RTC_REG_CONTROL, ctrl & (uint8_t)~CTRL_R_BIT);
+}
+
+void m48txx_set_datetime(const TK_DateTime *dt) {
+    uint8_t ctrl;
+
+    // Congelar registros para poder escribirlos (bit WRITE = 1)
+    ctrl = m48txx_read(RTC_REG_CONTROL);
+    m48txx_write(RTC_REG_CONTROL, ctrl | CTRL_W_BIT);
+
+    m48txx_write(RTC_REG_SECONDS, bin_to_bcd(dt->seconds));
+    m48txx_write(RTC_REG_MINUTES, bin_to_bcd(dt->minutes));
+    m48txx_write(RTC_REG_HOURS,   bin_to_bcd(dt->hours));
+    m48txx_write(RTC_REG_DAY,     bin_to_bcd(dt->day));
+    m48txx_write(RTC_REG_DATE,    bin_to_bcd(dt->date));
+    m48txx_write(RTC_REG_MONTH,   bin_to_bcd(dt->month));
+    m48txx_write(RTC_REG_YEAR,    bin_to_bcd(dt->year));
+
+    // Soltar el bit WRITE: transfiere los valores a los contadores reales
+    ctrl = m48txx_read(RTC_REG_CONTROL);
+    m48txx_write(RTC_REG_CONTROL, ctrl & (uint8_t)~CTRL_W_BIT);
+}
+
+// ============================================================================
+//  BCD CONVERSION
+// ============================================================================
 
 uint8_t bin_to_bcd(uint8_t bin) {
     return ((bin / 10) << 4) | (bin % 10);
