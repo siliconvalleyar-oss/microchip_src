@@ -4,12 +4,12 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>inc/GameEngine.h</itemPath>
-      <itemPath>inc/Graphics.h</itemPath>
-      <itemPath>inc/HardwareProfile.h</itemPath>
-      <itemPath>inc/PhysicsComponents.h</itemPath>
-      <itemPath>inc/fonts.h</itemPath>
-    </logicalFolder>
+      <itemPath>GameEngine.h</itemPath>
+      <itemPath>Graphics.h</itemPath>
+      <itemPath>HardwareProfile.h</itemPath>
+      <itemPath>PhysicsComponents.h</itemPath>
+      <itemPath>fonts.h</itemPath>
+    
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="true">
@@ -19,27 +19,28 @@
         <logicalFolder name="components" displayName="components" projectFiles="true">
           <itemPath>pic32mx795_st7789_version1.3_default/components/dfp.yml</itemPath>
           <itemPath>pic32mx795_st7789_version1.3_default/components/core.yml</itemPath>
-        </logicalFolder>
+        
         <itemPath>pic32mx795_st7789_version1.3_default/mcc-config.mc4</itemPath>
-      </logicalFolder>
+      
       <itemPath>Makefile</itemPath>
-    </logicalFolder>
+    
     <logicalFolder name="LibraryFiles"
                    displayName="LibraryFiles"
                    projectFiles="true">
-    </logicalFolder>
+    
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
-    </logicalFolder>
+    
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>src/main.cpp</itemPath>
-      <itemPath>src/GameEngine.cpp</itemPath>
-      <itemPath>src/Graphics.cpp</itemPath>
-    </logicalFolder>
-  </logicalFolder>
+      <itemPath>main.cpp</itemPath>
+      <itemPath>../ST7789_common/st7789_driver.c</itemPath>
+      <itemPath>GameEngine.cpp</itemPath>
+      <itemPath>Graphics.cpp</itemPath>
+    
+  
   <sourceRootList>
     <Elem>/home/optimus/MPLABXProjects/pic32mx795_st7789_version1.2.X</Elem>
   </sourceRootList>
