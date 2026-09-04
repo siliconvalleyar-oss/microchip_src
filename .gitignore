@@ -69,3 +69,6 @@ Makefile-default*
 .vscode/
 .idea/
 
+# Temporary files
+tmp/
+
