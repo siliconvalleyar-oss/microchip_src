@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>pic18f4620_ssd1306_oled</name>
+            <name>pic18f4620_ssd1306</name>
             <creation-uuid>f8902e97-4ab6-4309-8af6-298ef6cb4c81</creation-uuid>
             <make-project-type>0</make-project-type>
             <sourceEncoding>ISO-8859-1</sourceEncoding>
